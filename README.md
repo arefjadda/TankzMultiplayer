@@ -1,1 +1,1 @@
-# A game for Abbas/Aref!
+# A game for Abbas Aref & everyone!
