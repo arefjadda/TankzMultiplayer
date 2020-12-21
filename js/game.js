@@ -30,7 +30,7 @@ class Tank {
         this.posY = posY;
         this.width = 75;
         this.height = 50;
-        this.speed = 0.5;
+        this.speed = 1;
         this.reccolor = color;
         this.circolor = "black";
 
@@ -76,6 +76,42 @@ class Tank {
     
         if (down) {
             this.posY += this.speed;
+        }
+
+        if(this.posX < 0) {
+            this.posX = 0;
+        }
+
+        // Nozzle can't cross the boundaries
+        if(this.posX + (this.width / 2) + (50 * Math.cos(this.nozzleRot * (Math.PI / 180))) < 0) {
+            this.posX = -12.5 * Math.cos(this.nozzleRot * (Math.PI / 180));
+        }
+
+        if(this.posY < 0) {
+            this.posY = 0;
+        }
+
+        // Nozzle can't cross the boundaries
+        if(this.posY + (this.height / 2) + (50 * Math.sin(this.nozzleRot * (Math.PI / 180))) < 0) {
+            this.posY = -25 * Math.sin(this.nozzleRot * (Math.PI / 180));
+        }
+
+        if(this.posX + this.width > getCanvas.width) {
+            this.posX = getCanvas.width - this.width;
+        }
+
+        // Nozzle can't cross the boundaries
+        if(this.posX + (this.width / 2) + (50 * Math.cos(this.nozzleRot * (Math.PI / 180))) > getCanvas.width) {
+            this.posX = getCanvas.width - 12.5 * Math.cos(this.nozzleRot * (Math.PI / 180)) - this.width;
+        }
+
+        if(this.posY + this.height > getCanvas.height) {
+            this.posY = getCanvas.height - this.height;
+        }
+
+        // Nozzle can't cross the boundaries
+        if(this.posY + (this.height / 2) + (50 * Math.sin(this.nozzleRot * (Math.PI / 180))) > getCanvas.height) {
+            this.posY = getCanvas.height -25 * Math.sin(this.nozzleRot * (Math.PI / 180)) - this.height;
         }
     }
 
