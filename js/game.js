@@ -2,6 +2,27 @@ let getCanvas = document.getElementById("myCanvas");
 let canvas = getCanvas.getContext("2d");
 const FPS = 50;
 
+let gameComponents = [];
+
+
+class Bullet {
+    constructor(posX, posY, angle, speed = 1) {
+        this.posX = posX;
+        this.posY = posY;
+        this.speed = speed;
+        this.angle = angle;
+    }
+
+    update() {
+        canvas.beginPath();
+        canvas.arc(this.posX, this.posY, 3, 0, 2 * Math.PI);
+        canvas.fillStyle = "orange";
+        canvas.fill();
+        this.posX = this.posX + this.speed * Math.cos(this.angle * Math.PI / 180);
+        this.posY = this.posY + this.speed * Math.sin(this.angle * Math.PI / 180);
+    }
+
+}
 
 class Tank {
     constructor(posX, posY, color, nozzleRot) {
@@ -13,10 +34,11 @@ class Tank {
         this.reccolor = color;
         this.circolor = "black";
 
-        // Nuzzle properties
+        // Nozzle properties
         this.nozzleColor = "red";
         this.nozzleRot = 0;
         this.nozzleRotSpeed = 1;
+        this.nozzleLen = 50;
 
     }
 
@@ -68,9 +90,15 @@ class Tank {
 
         this.nozzleRot = this.nozzleRot % 360;
     }
-}
 
-let tank1 = new Tank(20, 20, "forestgreen", 0);
+    shoot() {
+        const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
+        const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
+        const bullet = new Bullet(bulletX, bulletY, this.nozzleRot);
+        gameComponents.push(bullet);
+    }
+
+}
 
 let leftKey = false;
 let rightKey = false;
@@ -78,9 +106,11 @@ let upKey = false;
 let downKey = false;
 let nozzleCW = false;
 let nozzleCCW = false; 
+let shoot = false;
 
 document.addEventListener('keydown', (e) => {
 
+    if(e.repeat){return}
     switch (e.key) {
         case 'a':
             // Move left
@@ -110,6 +140,12 @@ document.addEventListener('keydown', (e) => {
         case ',':
             // Nozzle CCW
             nozzleCCW = true;
+            break;
+
+        case ' ':
+            // Shoot
+            e.preventDefault();
+            tank1.shoot()
             break;
     
         default:
@@ -149,7 +185,12 @@ document.addEventListener('keyup', (e) => {
             // Nozzle CCW
             nozzleCCW = false;
             break;
-    
+        
+        case ' ':
+            // Shoot
+            e.preventDefault();
+            shoot = false;
+            break;
     
         default:
             break;
@@ -157,7 +198,8 @@ document.addEventListener('keyup', (e) => {
 });
 
 
-
+let tank1 = new Tank(20, 20, "forestgreen", 0);
+gameComponents.push(tank1);
 
 
 setInterval(() => {
@@ -165,7 +207,11 @@ setInterval(() => {
     tank1.rotateNozzle(nozzleCW, nozzleCCW);
 
     canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-    tank1.update();
+
+    gameComponents.forEach((component) => {
+        component.update();
+    });
+
 }, 1 / FPS);
 
 
