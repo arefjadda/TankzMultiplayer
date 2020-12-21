@@ -15,7 +15,6 @@ class Tank {
 
         // Nuzzle properties
         this.nozzleColor = "red";
-        // Nozzle rotation
         this.nozzleRot = 0;
         this.nozzleRotSpeed = 1;
 
@@ -29,7 +28,6 @@ class Tank {
         canvas.arc((this.posX + (this.width / 2)), (this.posY + (this.height / 2)), this.height / 3, 0, 2 * Math.PI);
         canvas.fillStyle = this.circolor;
         canvas.fill();
-        // canvas.stroke();
         
         // Rotate the heck out of my nozzle
         canvas.save();
