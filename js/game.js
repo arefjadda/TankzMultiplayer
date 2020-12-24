@@ -116,6 +116,11 @@ setInterval(() => {
     canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
     gameComponents.forEach((component) => {
         component.update();
+
+        if (component instanceof Bullet && component.explode) {
+            gameComponents.splice(gameComponents.indexOf(component), 1);
+        }
+
     });
 
 }, 1 / FPS);

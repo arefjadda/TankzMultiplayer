@@ -33,13 +33,6 @@ class Tank extends Rectangle {
     };
 
     move(left=false, right=false, up=false, down=false) {
-        gameComponents.forEach((component) => {
-            if (component != this && component instanceof Rectangle) {
-                this.rectCollision(component)
-            }
-            
-        });
-
         if (left) {
             this.posX -= this.speed;
         }
@@ -57,10 +50,33 @@ class Tank extends Rectangle {
         }
 
         // border collision check
-        
+        this.detectBorderCollision()
 
         // compoenent collision check
+        this.detectRectCollision(left, right, up, down)
 
+    }
+
+    rotateNozzle(nozzleCW=false, nozzleCCW=false) {
+        if (nozzleCW) {
+            this.nozzleRot += this.nozzleRotSpeed;
+        }
+    
+        if (nozzleCCW) {
+            this.nozzleRot -= this.nozzleRotSpeed;
+        }
+
+        this.nozzleRot = this.nozzleRot % 360;
+    }
+
+    shoot() {
+        const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
+        const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
+        const bullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+        gameComponents.push(bullet);
+    }
+
+    detectBorderCollision() {
         if(this.posX < 0) {
             this.posX = 0;
         }
@@ -98,23 +114,31 @@ class Tank extends Rectangle {
         }
     }
 
-    rotateNozzle(nozzleCW=false, nozzleCCW=false) {
-        if (nozzleCW) {
-            this.nozzleRot += this.nozzleRotSpeed;
-        }
-    
-        if (nozzleCCW) {
-            this.nozzleRot -= this.nozzleRotSpeed;
-        }
+    detectRectCollision(left, right, up, down) {
+        gameComponents.forEach((component) => {
+            if (component != this && 
+                component instanceof Rectangle && 
+                this.rectCollision(component)) {
+                    
+                    // Aref made this
+                    if (right && this.posX + this.width < component.posX + this.speed + this.speed / 2) {
+                        this.posX = component.posX - this.width;
+                    }
 
-        this.nozzleRot = this.nozzleRot % 360;
-    }
+                    if (left && this.posX > component.posX + component.width - this.speed - this.speed / 2) {
+                        this.posX = component.posX + component.width;
+                    }
 
-    shoot() {
-        const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
-        const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
-        const bullet = new Bullet(bulletX, bulletY, this.nozzleRot, 3);
-        gameComponents.push(bullet);
+                    if (up && this.posY > component.posY + component.height - this.speed - this.speed / 2) {
+                        this.posY = component.posY + component.height;
+                    }
+
+                    if (down && this.posY + this.height < component.posY + this.speed + this.speed / 2) {
+                        this.posY = component.posY - this.height;
+                    }
+            }
+            
+        });
     }
 
 }
