@@ -2,7 +2,6 @@ let getCanvas = document.getElementById("myCanvas");
 let canvas = getCanvas.getContext("2d");
 const FPS = 50;
 
-let gameComponents = [];
 
 
 let leftKey = false;
@@ -104,9 +103,11 @@ document.addEventListener('keyup', (e) => {
 
 
 let tank1 = new Tank(20, 20, "forestgreen", 0);
-let test_wall = new RectWall(500, 240, 100, 100);
-gameComponents.push(tank1);
-gameComponents.push(test_wall);
+let tank2 = new Tank(900, 500, "pink", 180);
+let map = new Map1();
+
+map.addComponent(tank1);
+map.addComponent(tank2);
 
 
 setInterval(() => {
@@ -114,11 +115,11 @@ setInterval(() => {
     tank1.rotateNozzle(nozzleCW, nozzleCCW);
 
     canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-    gameComponents.forEach((component) => {
+    map.gameComponents.forEach((component) => {
         component.update();
 
         if (component instanceof Bullet && component.explode) {
-            gameComponents.splice(gameComponents.indexOf(component), 1);
+            map.gameComponents.splice(map.gameComponents.indexOf(component), 1);
         }
 
     });

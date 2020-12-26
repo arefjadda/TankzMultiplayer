@@ -7,8 +7,8 @@ class Tank extends Rectangle {
 
         // Nozzle properties
         this.nozzleColor = "red";
-        this.nozzleRot = 0;
-        this.nozzleRotSpeed = 1;
+        this.nozzleRot = nozzleRot;
+        this.nozzleRotSpeed = 0.1;
         this.nozzleLen = 50;
 
     }
@@ -73,7 +73,7 @@ class Tank extends Rectangle {
         const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
         const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
         const bullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
-        gameComponents.push(bullet);
+        map.addComponent(bullet);
     }
 
     detectBorderCollision() {
@@ -115,7 +115,7 @@ class Tank extends Rectangle {
     }
 
     detectRectCollision(left, right, up, down) {
-        gameComponents.forEach((component) => {
+        map.gameComponents.forEach((component) => {
             if (component != this && 
                 component instanceof Rectangle && 
                 this.rectCollision(component)) {
