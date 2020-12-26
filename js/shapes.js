@@ -88,6 +88,14 @@ class Circle {
         // Eculidean distance
         const distance = Math.sqrt((distX * distX) + (distY * distY));
         
-        return [distance <= this.radius, Math.abs(distX) <  Math.abs(distY), distX, distY];
+        return [distance <= this.radius, Math.abs(distX) <  Math.abs(distY)];
+    }
+
+    circleCollision(circle) {
+        const distance = Math.sqrt((this.posX - circle.posX)**2 + (this.posY - circle.posY)**2);
+        if (this.radius + circle.radius >= distance) {
+            return true;
+        }
+        return false;
     }
 }

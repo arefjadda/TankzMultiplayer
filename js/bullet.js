@@ -32,6 +32,9 @@ class Bullet extends Circle {
 
         // check for border collision
         this.detectBorderCollision()
+
+        // check for bullet collision
+        this.detectBulletCollision()
     }
 
     detectRectCollision() {
@@ -46,7 +49,24 @@ class Bullet extends Circle {
                         this.speedX *= -1;
                     }
 
-                    this.lifeSpan -= 1;
+                    // max 2 bounces unless it hits a tank
+                    if (component instanceof Tank){
+                        this.lifeSpan = 0;
+                    } else {
+                        this.lifeSpan -= 1;
+                    }
+                    
+                }
+        });
+    }
+
+    detectBulletCollision() {
+        gameComponents.forEach(component => {
+            if (component != this && 
+                component instanceof Bullet &&
+                // collision detected
+                this.circleCollision(component)) {
+                    this.lifeSpan = 0;
                 }
         });
     }
