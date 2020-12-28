@@ -38,7 +38,7 @@ class Bullet extends Circle {
     }
 
     detectRectCollision() {
-        gameComponents.forEach(component => {
+        map.gameComponents.forEach(component => {
             if (component != this && 
                 component instanceof Rectangle &&
                 // collision detected
@@ -61,7 +61,7 @@ class Bullet extends Circle {
     }
 
     detectBulletCollision() {
-        gameComponents.forEach(component => {
+        map.gameComponents.forEach(component => {
             if (component != this && 
                 component instanceof Bullet &&
                 // collision detected
