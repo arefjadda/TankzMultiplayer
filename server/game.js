@@ -1,19 +1,59 @@
 // Everything that should be in this file:
 // New user enters or leaves the room (assigning a new tank)
+const Player = require('./player');
 
+class Game {
+    constructor(io) {
 
-setInterval(() => {
-    tank1.move(leftKey, rightKey, upKey, downKey);
-    tank1.rotateNozzle(nozzleCW, nozzleCCW);
+        // Connect io
+        this.io = io;
 
-    canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-    map.gameComponents.forEach((component) => {
-        component.update();
+        // A map of socketID to player object
+        this.players = new Map();
 
-        if (component instanceof Bullet && component.explode) {
-            map.gameComponents.splice(map.gameComponents.indexOf(component), 1);
+        // TODO;
+        this.gameMap = null;
+    }
+
+    addPlayer(socketID) {
+        const newPlayer = new Player(socketID);
+
+        // This is the first connected player
+        // TODO: move this logic to GameMap
+        if (this.players.size === 0) {
+            newPlayer.addTank(20, 20, 'forestgreen', 0);
+        } else if (this.players.size === 1) {
+            newPlayer.addTank(900, 500, 'pink', 180);
         }
 
-    });
+        this.players.set(socketID, newPlayer);
+    }
 
-}, 1 / FPS);
+    removePlayer(socketID) {
+        this.players.delete(socketID);
+        console.log('After removing', this.players);
+    }
+
+    getPlayerBySocketID(socketID) {
+        return this.players.get(socketID);
+    }
+
+    update() {
+        this.players.forEach((player, socketID, _) => {
+            player.update();
+        });
+    }
+
+    sendStates() {
+        const data = [];
+        this.players.forEach((player, socketID, _) => {
+            data.push(player.tank);
+        });
+        this.io.emit('current-state', data);
+        
+    }
+
+
+}
+
+module.exports = Game;

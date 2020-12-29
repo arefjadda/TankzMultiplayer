@@ -99,3 +99,8 @@ class Circle {
         return false;
     }
 }
+
+module.exports = {
+    Rectangle, 
+    Circle
+}

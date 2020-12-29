@@ -1,3 +1,11 @@
+const { Rectangle } = require('./shapes');
+
+// Todo: Hardcoding canvas
+const CANVAS = {
+    width: 1000,
+    height: 640
+}
+
 class Tank extends Rectangle {
     constructor(posX, posY, color, nozzleRot) {
         super(posX, posY, 75, 50);
@@ -6,31 +14,12 @@ class Tank extends Rectangle {
         this.circolor = "black";
 
         // Nozzle properties
-        this.nozzleColor = "red";
+        this.nozzleColor = this.circolor;
         this.nozzleRot = nozzleRot;
-        this.nozzleRotSpeed = 0.1;
+        this.nozzleRotSpeed = 0.5;
         this.nozzleLen = 50;
 
     }
-
-    update() {
-        canvas.fillStyle = this.reccolor;
-        canvas.fillRect(this.posX, this.posY, this.width, this.height);
-
-        canvas.beginPath();
-        canvas.arc((this.posX + (this.width / 2)), (this.posY + (this.height / 2)), this.height / 3, 0, 2 * Math.PI);
-        canvas.fillStyle = this.circolor;
-        canvas.fill();
-        
-        // Rotate the heck out of my nozzle
-        canvas.save();
-        canvas.translate(this.posX + (this.width / 2), this.posY + (this.height / 2));
-        canvas.rotate(this.nozzleRot * Math.PI / 180);
-        canvas.translate(-(this.posX + (this.width / 2)), - (this.posY + (this.height / 2)));
-        canvas.fillStyle = this.nozzleColor;
-        canvas.fillRect(this.posX + (this.width / 2), this.posY + (this.height / 2) - 4.5, 50, 9);
-        canvas.restore();
-    };
 
     move(left=false, right=false, up=false, down=false) {
         if (left) {
@@ -50,10 +39,10 @@ class Tank extends Rectangle {
         }
 
         // border collision check
-        this.detectBorderCollision()
+        // this.detectBorderCollision()
 
         // compoenent collision check
-        this.detectRectCollision(left, right, up, down)
+        // this.detectRectCollision(left, right, up, down)
 
     }
 
@@ -95,22 +84,22 @@ class Tank extends Rectangle {
             this.posY = -25 * Math.sin(this.nozzleRot * (Math.PI / 180));
         }
 
-        if(this.posX + this.width > getCanvas.width) {
-            this.posX = getCanvas.width - this.width;
+        if(this.posX + this.width > CANVAS.width) {
+            this.posX = CANVAS.width - this.width;
         }
 
         // Nozzle can't cross the boundaries
-        if(this.posX + (this.width / 2) + (50 * Math.cos(this.nozzleRot * (Math.PI / 180))) > getCanvas.width) {
-            this.posX = getCanvas.width - 12.5 * Math.cos(this.nozzleRot * (Math.PI / 180)) - this.width;
+        if(this.posX + (this.width / 2) + (50 * Math.cos(this.nozzleRot * (Math.PI / 180))) > CANVAS.width) {
+            this.posX = CANVAS.width - 12.5 * Math.cos(this.nozzleRot * (Math.PI / 180)) - this.width;
         }
 
-        if(this.posY + this.height > getCanvas.height) {
-            this.posY = getCanvas.height - this.height;
+        if(this.posY + this.height > CANVAS.height) {
+            this.posY = CANVAS.height - this.height;
         }
 
         // Nozzle can't cross the boundaries
-        if(this.posY + (this.height / 2) + (50 * Math.sin(this.nozzleRot * (Math.PI / 180))) > getCanvas.height) {
-            this.posY = getCanvas.height -25 * Math.sin(this.nozzleRot * (Math.PI / 180)) - this.height;
+        if(this.posY + (this.height / 2) + (50 * Math.sin(this.nozzleRot * (Math.PI / 180))) > CANVAS.height) {
+            this.posY = CANVAS.height -25 * Math.sin(this.nozzleRot * (Math.PI / 180)) - this.height;
         }
     }
 
@@ -142,3 +131,5 @@ class Tank extends Rectangle {
     }
 
 }
+
+module.exports = Tank;
