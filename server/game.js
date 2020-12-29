@@ -3,7 +3,7 @@
 const Player = require('./player');
 
 class Game {
-    constructor(io) {
+    constructor(io, gameMap) {
 
         // Connect io
         this.io = io;
@@ -12,7 +12,7 @@ class Game {
         this.players = new Map();
 
         // TODO;
-        this.gameMap = null;
+        this.gameMap = gameMap;
     }
 
     addPlayer(socketID) {
@@ -25,11 +25,15 @@ class Game {
         } else if (this.players.size === 1) {
             newPlayer.addTank(900, 500, 'pink', 180);
         }
+        this.gameMap.addComponent(newPlayer.tank);
+
 
         this.players.set(socketID, newPlayer);
     }
 
     removePlayer(socketID) {
+        const player = this.getPlayerBySocketID(socketID);
+        this.gameMap.gameComponents.splice(this.gameMap.gameComponents.indexOf(player.tank), 1);
         this.players.delete(socketID);
         console.log('After removing', this.players);
     }

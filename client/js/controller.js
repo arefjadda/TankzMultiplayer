@@ -1,8 +1,3 @@
-let getCanvas = document.getElementById("myCanvas");
-let canvas = getCanvas.getContext("2d");
-const FPS = 60;
-
-
 // Initialize network
 const network = new Network('http://localhost:5000')
 
@@ -15,7 +10,6 @@ let nozzleCCW = false;
 let correctKey = false;
 
 document.addEventListener('keydown', (e) => {
-
     if(e.repeat){return}
     switch (e.key) {
         case 'a':
@@ -129,31 +123,6 @@ document.addEventListener('keyup', (e) => {
         nozzleCCW
     });
 });
-
-
-let tank1 = new Tank(20, 20, "forestgreen", 0);
-let tank2 = new Tank(900, 500, "pink", 180);
-let map = new Map1();
-
-map.addComponent(tank1);
-map.addComponent(tank2);
-
-
-// setInterval(() => {
-//     tank1.move(leftKey, rightKey, upKey, downKey);
-//     tank1.rotateNozzle(nozzleCW, nozzleCCW);
-
-//     canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-//     map.gameComponents.forEach((component) => {
-//         component.update();
-
-//         if (component instanceof Bullet && component.explode) {
-//             map.gameComponents.splice(map.gameComponents.indexOf(component), 1);
-//         }
-
-//     });
-
-// }, 1000 / FPS);
 
 
 

@@ -1,3 +1,5 @@
+const { Circle } = require('./shapes');
+
 class Bullet extends Circle {
     constructor(posX, posY, radius, angle, speed) {
         super(posX, posY, radius)
@@ -6,17 +8,6 @@ class Bullet extends Circle {
         this.speedY = speed * Math.sin(this.angle * Math.PI / 180);
         this.lifeSpan = 3;
         this.explode = false;
-    }
-
-    update() {
-        // draw
-        canvas.beginPath();
-        canvas.arc(this.posX, this.posY, this.radius, 0, 2 * Math.PI);
-        canvas.fillStyle = "orange";
-        canvas.fill();
-
-        this.move()
-        
     }
 
     move() {
@@ -87,3 +78,5 @@ class Bullet extends Circle {
     }
 
 }
+
+module.exports = Bullet;

@@ -1,17 +1,14 @@
 const { Rectangle } = require('./shapes');
-
-// Todo: Hardcoding canvas
-const CANVAS = {
-    width: 1000,
-    height: 640
-}
+const Bullet = require('./bullet');
 
 class Tank extends Rectangle {
-    constructor(posX, posY, color, nozzleRot) {
+    constructor(posX, posY, color, nozzleRot, gameMap) {
         super(posX, posY, 75, 50);
         this.speed = 1;
         this.reccolor = color;
         this.circolor = "black";
+        
+        this.gameMap = gameMap;
 
         // Nozzle properties
         this.nozzleColor = this.circolor;

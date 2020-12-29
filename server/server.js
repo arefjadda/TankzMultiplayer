@@ -4,6 +4,7 @@ const path = require('path');
 
 // Game requirements
 const Game = require('./game');
+const Map1 = require('./map');
 
 
 // App initialize
@@ -23,7 +24,8 @@ let io = socketio(server);
 
 /* =========== GAME LOGIC ========= */
 const FPS = 100;
-const game = new Game(io);
+const map = new Map1('Christmas', 1000, 640);
+const game = new Game(io, map);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
@@ -39,6 +41,8 @@ io.on('connection', (socket) => {
 
     socket.on('tank-shot', () => {
         console.log("tank shot");
+        const player = game.getPlayerBySocketID(socket.id);
+        player.tank.shoot();
     });
     
     socket.on('disconnect', () => {

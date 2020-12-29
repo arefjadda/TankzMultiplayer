@@ -1,3 +1,5 @@
+const { Rectangle } = require('./shapes');
+
 class RectWall extends Rectangle {
     constructor(posX, posY, width, height, color='gray') {
         super(posX, posY, width, height);
@@ -10,3 +12,4 @@ class RectWall extends Rectangle {
     }
 }
 
+module.exports = RectWall;
