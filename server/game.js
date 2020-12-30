@@ -3,6 +3,7 @@
 const Bullet = require('./bullet');
 const Player = require('./player');
 const Tank = require('./tank');
+const CollisionManager = require('./collisionManager');
 
     // TODO: rename to GameManager
 class Game {
@@ -15,10 +16,13 @@ class Game {
         // A map of socketID to player object
         this.players = new Map();
 
-        // TODO;
+        // The map of the game
         this.gameMap = gameMap;
 
+        // List of all the components
         this.gameComponents = [];
+
+        this.collisionManager = new CollisionManager(this.gameComponents, this.gameMap);
 
 
     }
@@ -75,7 +79,7 @@ class Game {
                 
             }
             component.update()
-            component.detectCollision(this.gameComponents);
+            this.collisionManager.detectCollision(component);
         });
     }
 
