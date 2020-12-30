@@ -1,6 +1,6 @@
 const { Circle, Rectangle } = require('./shapes');
 class Bullet extends Circle {
-    constructor(posX, posY, radius, angle, speed, gameMap) {
+    constructor(posX, posY, radius, angle, speed) {
         super(posX, posY, radius)
         this.angle = angle;
         this.speedX = speed * Math.cos(this.angle * Math.PI / 180);
@@ -8,7 +8,8 @@ class Bullet extends Circle {
         this.lifeSpan = 3;
         this.explode = false;
 
-        this.gameMap = gameMap;
+        // component type
+        this.type = 'bullet';
     }
 
     update() {

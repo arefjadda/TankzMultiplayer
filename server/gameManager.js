@@ -1,8 +1,9 @@
 // Everything that should be in this file:
 // New user enters or leaves the room (assigning a new tank)
-const Bullet = require('./bullet');
 const Player = require('./player');
+const Bullet = require('./bullet');
 const Tank = require('./tank');
+const RectWall = require('./wall');
 const CollisionManager = require('./collisionManager');
 
     // TODO: rename to GameManager
@@ -10,7 +11,7 @@ class GameManager {
 
     constructor(io, gameMap) {
 
-        // Connect io
+        // SocketIO connection
         this.io = io;
 
         // A map of socketID to player object
@@ -19,9 +20,10 @@ class GameManager {
         // The map of the game
         this.gameMap = gameMap;
 
-        // List of all the components
-        this.gameComponents = [];
+        // List of all game components
+        this.gameComponents = this.gameMap.getMapComponents();
 
+        // A manager for game's collision system
         this.collisionManager = new CollisionManager(this.gameComponents, this.gameMap);
 
 
@@ -33,9 +35,9 @@ class GameManager {
         // This is the first connected player
         // TODO: get the position from GameMap
         if (this.players.size === 0) {
-            tank = new Tank(20, 20, 'forestgreen', 0, this.gameMap);
+            tank = new Tank(20, 20, 'forestgreen', 0);
         } else if (this.players.size === 1) {
-            tank = new Tank(900, 500, 'pink', 180, this.gameMap);
+            tank = new Tank(900, 500, 'pink', 180);
         }
         
         // Add the player's tank to the game map
@@ -86,13 +88,6 @@ class GameManager {
     sendStates() {
         const data = [];
         this.gameComponents.forEach(component => {
-            if (component instanceof Tank) {
-                component.type = 'tank';
-            } 
-
-            if (component instanceof Bullet) {
-                component.type = 'bullet';
-            }
             data.push(component);
         });
         this.io.emit('current-state', data);

@@ -3,7 +3,7 @@ const socketio = require("socket.io");
 const path = require('path');
 
 // Game requirements
-const GameManager = require('./game');
+const GameManager = require('./gameManager');
 const Map1 = require('./map');
 
 

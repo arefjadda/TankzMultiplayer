@@ -5,6 +5,9 @@ class RectWall extends Rectangle {
         super(posX, posY, width, height);
         
         this.color = color;
+
+        // component type
+        this.type = 'wall';
     }
 
     update() {

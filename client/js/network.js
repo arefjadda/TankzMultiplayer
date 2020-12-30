@@ -22,6 +22,9 @@ class Network {
             if (el.type === 'bullet') {
                 drawBullet(el);
             }
+            if (el.type === 'wall') {
+                drawWall(el);
+            }
         });
     }
 
