@@ -15,8 +15,13 @@ class Network {
 
     updateState(data) {
         canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-        data.forEach(tank => {
-            drawTank(tank);
+        data.forEach(el => {
+            if (el.type === 'tank') {
+                drawTank(el);
+            }
+            if (el.type === 'bullet') {
+                drawBullet(el);
+            }
         });
     }
 

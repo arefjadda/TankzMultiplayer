@@ -23,6 +23,11 @@ function drawTank(tank) {
 function drawBullet(bullet) {
     canvas.beginPath();
     canvas.arc(bullet.posX, bullet.posY, bullet.radius, 0, 2 * Math.PI);
-    canvas.fillStyle = "orange";
+    canvas.fillStyle = "red"; // TODO: move back
     canvas.fill();
+}
+
+function drawWall(wall) {
+    canvas.fillStyle = wall.color;
+    canvas.fillRect(wall.posX, wall.posY, wall.width, wall.height);
 }

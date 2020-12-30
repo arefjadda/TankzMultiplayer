@@ -52,7 +52,6 @@ document.addEventListener('keydown', (e) => {
             // Shoot
             e.preventDefault();
             correctKey = true;
-            tank1.shoot();
             network.sendShot();
             break;
     

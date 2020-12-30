@@ -23,7 +23,7 @@ let io = socketio(server);
 
 
 /* =========== GAME LOGIC ========= */
-const FPS = 100;
+const FPS = 120;
 const map = new Map1('Christmas', 1000, 640);
 const game = new Game(io, map);
 
@@ -34,15 +34,12 @@ io.on('connection', (socket) => {
     console.log(game.players);
 
     socket.on('tank-movement', (data) => {
-        const player = game.getPlayerBySocketID(socket.id);
-        player.moveTank(data);
-
+        game.onPlayerMove(socket.id, data);
     })
 
     socket.on('tank-shot', () => {
-        console.log("tank shot");
-        const player = game.getPlayerBySocketID(socket.id);
-        player.tank.shoot();
+        console.log("hello");
+        game.onPlayerShoot(socket.id);
     });
     
     socket.on('disconnect', () => {
@@ -55,7 +52,7 @@ io.on('connection', (socket) => {
 
 setInterval(() => {
     // console.log("update");
-    game.update();
+    game.updateComponents();
     game.sendStates();
 
 }, 1000 / FPS);

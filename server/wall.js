@@ -6,9 +6,9 @@ class RectWall extends Rectangle {
         
         this.color = color;
     }
+
     update() {
-        canvas.fillStyle = this.color;
-        canvas.fillRect(this.posX, this.posY, this.width, this.height);
+        // console.log("must update wall");
     }
 }
 

@@ -1,13 +1,18 @@
-const { Circle } = require('./shapes');
-
+const { Circle, Rectangle } = require('./shapes');
 class Bullet extends Circle {
-    constructor(posX, posY, radius, angle, speed) {
+    constructor(posX, posY, radius, angle, speed, gameMap) {
         super(posX, posY, radius)
         this.angle = angle;
         this.speedX = speed * Math.cos(this.angle * Math.PI / 180);
         this.speedY = speed * Math.sin(this.angle * Math.PI / 180);
         this.lifeSpan = 3;
         this.explode = false;
+
+        this.gameMap = gameMap;
+    }
+
+    update() {
+        this.move();
     }
 
     move() {
@@ -17,19 +22,21 @@ class Bullet extends Circle {
         
         this.posX = this.posX + this.speedX;
         this.posY = this.posY + this.speedY;
-
-        // check for collision
-        this.detectRectCollision()
-
-        // check for border collision
-        this.detectBorderCollision()
-
-        // check for bullet collision
-        this.detectBulletCollision()
     }
 
-    detectRectCollision() {
-        map.gameComponents.forEach(component => {
+    detectCollision(gameComponents) {
+        // check for border collision
+        this.detectBorderCollision();
+
+        // check for collision
+        this.detectRectCollision(gameComponents);
+
+        // check for bullet collision
+        this.detectBulletCollision(gameComponents);
+    }
+
+    detectRectCollision(gameComponents) {
+        gameComponents.forEach(component => {
             if (component != this && 
                 component instanceof Rectangle &&
                 // collision detected
@@ -51,8 +58,8 @@ class Bullet extends Circle {
         });
     }
 
-    detectBulletCollision() {
-        map.gameComponents.forEach(component => {
+    detectBulletCollision(gameComponents) {
+        gameComponents.forEach(component => {
             if (component != this && 
                 component instanceof Bullet &&
                 // collision detected
@@ -64,13 +71,13 @@ class Bullet extends Circle {
 
     detectBorderCollision() {
         if (this.posX + this.radius < 0 || 
-            this.posX + this.radius > getCanvas.width) {
+            this.posX + this.radius > this.gameMap.width) {
             this.speedX *= -1;
             this.lifeSpan -= 1;
         } 
         
         if (this.posY + this.radius < 0 ||
-            this.posY + this.radius > getCanvas.height) {
+            this.posY + this.radius > this.gameMap.height) {
             this.speedY *= -1;
             this.lifeSpan -= 1;
         }
