@@ -6,7 +6,7 @@ const Tank = require('./tank');
 const CollisionManager = require('./collisionManager');
 
     // TODO: rename to GameManager
-class Game {
+class GameManager {
 
     constructor(io, gameMap) {
 
@@ -110,4 +110,4 @@ class Game {
 
 }
 
-module.exports = Game;
+module.exports = GameManager;

@@ -3,7 +3,7 @@ const socketio = require("socket.io");
 const path = require('path');
 
 // Game requirements
-const Game = require('./game');
+const GameManager = require('./game');
 const Map1 = require('./map');
 
 
@@ -25,7 +25,7 @@ let io = socketio(server);
 /* =========== GAME LOGIC ========= */
 const FPS = 120;
 const map = new Map1('Christmas', 1000, 640);
-const game = new Game(io, map);
+const game = new GameManager(io, map);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created

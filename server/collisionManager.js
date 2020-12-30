@@ -1,4 +1,4 @@
-const {Rectangle, Circle} = require('./shapes');
+const {Rectangle} = require('./shapes');
 const Tank = require('./tank');
 const Bullet = require('./bullet');
 
@@ -56,7 +56,7 @@ class CollisionManager {
 
     circleOnCircleCollision(circle1, circle2) {
         const distance = Math.sqrt((circle1.posX - circle2.posX)**2 + (circle1.posY - circle2.posY)**2);
-        if (this.radius + circle2.radius >= distance) {
+        if (circle1.radius + circle2.radius >= distance) {
             return true;
         }
         return false;
@@ -177,11 +177,11 @@ class CollisionManager {
 
     detectBulletForBullet(bullet) {
         this.gameComponents.forEach(component => {
-            if (component != this && 
+            if (component != bullet && 
                 component instanceof Bullet &&
                 // collision detected
                 this.circleOnCircleCollision(bullet, component)) {
-                    this.lifeSpan = 0;
+                    bullet.lifeSpan = 0;
                 }
         });
         
