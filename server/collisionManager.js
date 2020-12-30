@@ -102,7 +102,7 @@ class CollisionManager {
 
         // Nozzle can't cross the boundaries
         if(tank.posY + (tank.height / 2) + (50 * Math.sin(tank.nozzleRot * (Math.PI / 180))) > this.gameMap.height) {
-            this.posY = this.gameMap.height -25 * Math.sin(this.nozzleRot * (Math.PI / 180)) - this.height;
+            tank.posY = this.gameMap.height -25 * Math.sin(tank.nozzleRot * (Math.PI / 180)) - tank.height;
         }
     }
 

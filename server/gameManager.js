@@ -34,22 +34,27 @@ class GameManager {
 
         // This is the first connected player
         // TODO: get the position from GameMap
-        if (this.players.size === 0) {
-            tank = new Tank(20, 20, 'forestgreen', 0);
-        } else if (this.players.size === 1) {
-            tank = new Tank(900, 500, 'pink', 180);
+        try {
+            // Spawn the tank
+            const spawn = this.gameMap.getSpawnPoint();
+            tank = new Tank(spawn.coord[0], spawn.coord[1], 'forestgreen', spawn.angle);
+            
+            // Add the player's tank to the game map
+            this.addComponent(tank);
+
+            // Add new player to the collection of players
+            const newPlayer = new Player(socketID, tank, spawn.id);
+            this.players.set(socketID, newPlayer);
+        }
+        catch(error){
+            console.log(error);
         }
         
-        // Add the player's tank to the game map
-        this.addComponent(tank);
-
-        // Add new player to the collection of players
-        const newPlayer = new Player(socketID, tank);
-        this.players.set(socketID, newPlayer);
     }
 
     removePlayer(socketID) {
         const player = this.getPlayerBySocketID(socketID);
+        this.gameMap.restoreSpawn(player.spawnID);
         this.gameComponents.splice(this.gameComponents.indexOf(player.tank), 1);
         this.players.delete(socketID);
         console.log('After removing', this.players);

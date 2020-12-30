@@ -31,14 +31,12 @@ io.on('connection', (socket) => {
     // A player/tank object needs to be to created
     console.log('user connected', socket.id);
     game.addPlayer(socket.id);
-    console.log(game.players);
 
     socket.on('tank-movement', (data) => {
         game.onPlayerMove(socket.id, data);
     })
 
     socket.on('tank-shot', () => {
-        console.log("hello");
         game.onPlayerShoot(socket.id);
     });
     
