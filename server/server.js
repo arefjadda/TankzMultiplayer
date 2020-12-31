@@ -30,7 +30,11 @@ const game = new GameManager(io, map);
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
     console.log('user connected', socket.id);
-    game.addPlayer(socket.id);
+
+    // Make sure to only create tank if it's the player
+    socket.on('authentication', (data) => {
+        if (data === 'Player') game.addPlayer(socket.id);
+    });
 
     socket.on('tank-movement', (data) => {
         game.onPlayerMove(socket.id, data);
@@ -39,7 +43,19 @@ io.on('connection', (socket) => {
     socket.on('tank-shot', () => {
         game.onPlayerShoot(socket.id);
     });
+
+    // Handle chat events
+    socket.on('chat', function(data){
+        console.log(data);
+        io.sockets.emit('chat', data);
+    });
+
+    socket.on('typing', function(data){
+        console.log(data);
+        socket.broadcast.emit('typing', data);
+    });
     
+    // Disconnect player
     socket.on('disconnect', () => {
         console.log('user disconnected', socket.id);
         game.removePlayer(socket.id);

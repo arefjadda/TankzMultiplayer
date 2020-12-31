@@ -5,6 +5,10 @@ class Network {
         this.socket.on('current-state', this.updateState);
     }
 
+    sendPlayerAuthentication(data) {
+        this.socket.emit('authentication', data);
+    }
+
     sendMovement(data) {
         this.socket.emit('tank-movement', data);
     }
