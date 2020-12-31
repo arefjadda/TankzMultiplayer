@@ -2,9 +2,10 @@ let getCanvas = document.getElementById("myCanvas");
 let canvas = getCanvas.getContext("2d");
 
 function drawTank(tank) {
+    
     canvas.fillStyle = tank.reccolor;
     canvas.fillRect(tank.posX, tank.posY, tank.width, tank.height);
-
+    
     canvas.beginPath();
     canvas.arc((tank.posX + (tank.width / 2)), (tank.posY + (tank.height / 2)), tank.height / 3, 0, 2 * Math.PI);
     canvas.fillStyle = tank.circolor;
@@ -18,6 +19,15 @@ function drawTank(tank) {
     canvas.fillStyle = tank.nozzleColor;
     canvas.fillRect(tank.posX + (tank.width / 2), tank.posY + (tank.height / 2) - 4.5, 50, 9);
     canvas.restore();
+
+    // Draw health bar
+    canvas.fillStyle = "red";
+    canvas.fillRect(tank.posX, tank.posY - 20, tank.width, 5);
+    canvas.fillStyle = "lightgreen";
+    canvas.fillRect(tank.posX, tank.posY - 20, tank.width * tank.health / 100, 5);
+    canvas.strokeStyle = "black";
+    canvas.strokeRect(tank.posX, tank.posY - 20, tank.width, 5);
+
 }
 
 function drawBullet(bullet) {

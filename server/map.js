@@ -54,6 +54,10 @@ class Map1 extends GameMap {
         // add the two walls to the map's list of components
         this.addMapComponent(wall1);
         this.addMapComponent(wall2);
+
+        // ground friction and tanks accelerations for this map
+        this.friction = 0.01;
+        this.tanksAcceleration = 0.03;
         
         this.spawnPoints = {
             spawn1: {

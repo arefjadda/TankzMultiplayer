@@ -8,6 +8,9 @@ class Bullet extends Circle {
         this.lifeSpan = 3;
         this.explode = false;
 
+        // Damage
+        this.damage = 20;
+
         // component type
         this.type = 'bullet';
     }
