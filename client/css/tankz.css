@@ -46,6 +46,7 @@ h2 {
     margin: 0 10px;
     border-bottom: 1px solid #e9e9e9;
     color: #555;
+    text-align: left;
 }
 
 #feedback p{
