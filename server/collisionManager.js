@@ -111,22 +111,22 @@ class CollisionManager {
             if (component != tank && 
                 component instanceof Rectangle && 
                 this.rectOnrectCollision(tank, component)) {   
-                if (tank.moveRight && tank.posX + tank.width < component.posX + tank.maxSpeed + tank.acceleration / 2) {
+                if (tank.posX + tank.width < component.posX + tank.maxSpeed + tank.acceleration / 2) {
                     tank.speedX = 0;
                     tank.posX = component.posX - tank.width;
                 }
 
-                if (tank.moveLeft && tank.posX > component.posX + component.width - tank.maxSpeed - tank.acceleration / 2) {
+                if (tank.posX > component.posX + component.width - tank.maxSpeed - tank.acceleration / 2) {
                     tank.speedX = 0;
                     tank.posX = component.posX + component.width;
                 }
 
-                if (tank.moveUp && tank.posY > component.posY + component.height - tank.maxSpeed - tank.acceleration / 2) {
+                if (tank.posY > component.posY + component.height - tank.maxSpeed - tank.acceleration / 2) {
                     tank.speedY = 0;
                     tank.posY = component.posY + component.height;
                 }
 
-                if (tank.moveDown && tank.posY + tank.height < component.posY + tank.maxSpeed + tank.acceleration / 2) {
+                if (tank.posY + tank.height < component.posY + tank.maxSpeed + tank.acceleration / 2) {
                     tank.speedY = 0;
                     tank.posY = component.posY - tank.height;
                 }
