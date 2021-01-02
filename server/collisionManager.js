@@ -20,16 +20,16 @@ class CollisionManager {
     }
 
     circleOnRectCollision(circle, rect) {
-        // Nearest edge to the circle in the x direction 
+        // Nearest edge of rectangle to the circle in the x direction 
         let nearestEdgeX = circle.posX;
 
-        // Nearest edge to the circle in the y direciton
+        // Nearest edge of rectangle to the circle in the y direciton
         let nearestEdgeY = circle.posY;
 
-        if (circle.posX < rect.posX) {                      // near the left edge
+        if (circle.posX <= rect.posX) {                      // near the left edge
             nearestEdgeX = rect.posX;
 
-        } else if (circle.posX > rect.posX + rect.width) { // near the right edge
+        } else if (circle.posX >= rect.posX + rect.width) { // near the right edge
             nearestEdgeX = rect.posX + rect.width;
         } 
 
@@ -158,11 +158,12 @@ class CollisionManager {
 
     detectRectForBullet(bullet) {
         this.gameComponents.forEach(component => {
-            if (component != this && 
-                component instanceof Rectangle &&
-                // collision detected
-                this.circleOnRectCollision(bullet, component).collided) {
-                    if (this.circleOnRectCollision(bullet, component).horizontalCollision) { // hits the horizontal wall
+            if (component != this && component instanceof Rectangle) {
+
+                const collisionResult = this.circleOnRectCollision(bullet, component);
+
+                if (collisionResult.collided) {
+                    if (collisionResult.horizontalCollision) { // hits the horizontal wall
                         bullet.speedY *= -1;
                     } else {
                         bullet.speedX *= -1;
@@ -171,10 +172,12 @@ class CollisionManager {
                     // max 2 bounces unless it hits a tank
                     if (component instanceof Tank){
                         component.takeDamage(bullet.damage);
-                        bullet.lifeSpan = 0;
+                        bullet.explode()
                     } else {
                         bullet.lifeSpan -= 1;
                     }
+                }
+                    
                     
                 }
         });

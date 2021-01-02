@@ -16,7 +16,7 @@ class Tank extends Rectangle {
 
         // Health
         this.health = 100;
-        this.explode = false;
+        this.exploded = false;
 
         // Nozzle properties
         this.nozzleColor = this.circolor;
@@ -38,7 +38,7 @@ class Tank extends Rectangle {
 
     takeDamage(damage) {
         this.health -= damage;
-        if(this.health <= 0) this.explode = true;
+        if(this.health <= 0) this.exploded = true;
     }
 
     updateDirections(dirs) {
@@ -58,22 +58,32 @@ class Tank extends Rectangle {
     move() {
         // set a max speed if acceleration is not given
 
-        if (this.moveLeft) if (Math.abs(this.speedX) < this.maxSpeed) this.speedX -= this.acceleration;
+        if (this.moveLeft) 
+            if (Math.abs(this.speedX) < this.maxSpeed) 
+                this.speedX -= this.acceleration;
     
-        if (this.moveRight) if (Math.abs(this.speedX) < this.maxSpeed) this.speedX += this.acceleration; 
+        if (this.moveRight) 
+            if (Math.abs(this.speedX) < this.maxSpeed) 
+                this.speedX += this.acceleration; 
         
-        if (this.moveUp) if (Math.abs(this.speedY) < this.maxSpeed) this.speedY -= this.acceleration;
-    
-        if (this.moveDown) if (Math.abs(this.speedY) < this.maxSpeed) this.speedY += this.acceleration;
+        if (this.moveUp) 
+            if (Math.abs(this.speedY) < this.maxSpeed) 
+                this.speedY -= this.acceleration;
+        
+        if (this.moveDown) 
+            if (Math.abs(this.speedY) < this.maxSpeed) 
+                this.speedY += this.acceleration;
 
         if (this.speedX !== 0) {
             if (Math.abs(this.speedX) <= 0.01) this.speedX = 0;
+
             if (this.speedX > 0) this.speedX -= this.friction;
             else this.speedX += this.friction;
         }
 
         if (this.speedY !== 0) {
             if (Math.abs(this.speedY) <= 0.01) this.speedY = 0;
+            
             if (this.speedY > 0) this.speedY -= this.friction;
             else this.speedY += this.friction;
         }
