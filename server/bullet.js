@@ -11,6 +11,9 @@ class Bullet extends Circle {
         // Damage
         this.damage = 20;
 
+        // Damage
+        this.damage = 20;
+
         // component type
         this.type = 'bullet';
     }

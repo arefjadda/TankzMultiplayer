@@ -1,5 +1,9 @@
 // Initialize network
-const network = new Network('http://localhost:5000')
+const network = new Network('http://localhost:5000');
+myCanvas = document.getElementById("myCanvas");
+
+// Authenticate player
+network.sendPlayerAuthentication('Player');
 
 let leftKey = false;
 let rightKey = false;
@@ -9,7 +13,7 @@ let nozzleCW = false;
 let nozzleCCW = false;
 let correctKey = false;
 
-document.addEventListener('keydown', (e) => {
+myCanvas.addEventListener('keydown', (e) => {
     if(e.repeat){return}
     switch (e.key) {
         case 'a':
@@ -71,7 +75,7 @@ document.addEventListener('keydown', (e) => {
     
 });
 
-document.addEventListener('keyup', (e) => {
+myCanvas.addEventListener('keyup', (e) => {
 
     switch (e.key) {
         case 'a':

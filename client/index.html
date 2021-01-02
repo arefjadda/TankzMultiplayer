@@ -9,11 +9,28 @@
     <!-- Game files -->
     <script defer src="js/illustrator.js"></script>
     <script defer src="js/controller.js"></script>
+    <!-- Chat files -->
+    <script defer src="js/chat.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tankz</title>
 </head>
 <body>
-    <canvas id="myCanvas" width="1000" height="640" style="border:1px solid #000000;">
-    </canvas>
+    <div id="page">
+        <!-- Game -->
+        <canvas tabindex='1' id="myCanvas" width="1000" height="640">
+        </canvas>
+
+        <!-- Chat -->
+        <div id="tankz-chat" height="640">
+            <div id="chat-window">
+                <div id="output"></div>
+                <div id="feedback"></div>
+            </div>
+            <input id="handle" type="text" placeholder="Name">
+            <input id="message" type="text" placeholder="Message">
+            <button id="send">Send</button>
+        </div>
+    </div>
 </body>
 </html>
