@@ -96,12 +96,12 @@ class GameManager {
 
         components.forEach(component => {
             if (component instanceof Bullet) {
-                if (component.explode) {
+                if (component.exploded) {
                     this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
                 }
             }
             if (component instanceof Tank) {
-                if (component.explode) {
+                if (component.exploded) {
                     this.players.forEach((value, key, map) => {
                         if (value.tank === component) {
                             this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
@@ -112,8 +112,11 @@ class GameManager {
                 }
             }
 
-            component.update()
-            this.collisionManager.detectCollision(component);
+            if (!component.exploded) {
+                component.update()
+                this.collisionManager.detectCollision(component);
+            }
+
         });
     }
 
