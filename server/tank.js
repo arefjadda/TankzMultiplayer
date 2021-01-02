@@ -2,11 +2,21 @@ const { Rectangle } = require('./shapes');
 const Bullet = require('./bullet');
 
 class Tank extends Rectangle {
-    constructor(posX, posY, color, nozzleRot) {
+    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1) {
         super(posX, posY, 75, 50);
-        this.speed = 1;
         this.reccolor = color;
         this.circolor = "black";
+
+        // Movement
+        this.acceleration = acceleration;
+        this.friction = mapFriction;
+        this.maxSpeed = 1;
+        this.speedX = 0;
+        this.speedY = this.speedX;
+
+        // Health
+        this.health = 100;
+        this.exploded = false;
 
         // Nozzle properties
         this.nozzleColor = this.circolor;
@@ -26,6 +36,11 @@ class Tank extends Rectangle {
         this.type = 'tank';
     }
 
+    takeDamage(damage) {
+        this.health -= damage;
+        if(this.health <= 0) this.exploded = true;
+    }
+
     updateDirections(dirs) {
         this.moveLeft = dirs.leftKey;
         this.moveRight = dirs.rightKey;
@@ -41,21 +56,40 @@ class Tank extends Rectangle {
     }
 
     move() {
-        if (this.moveLeft) {
-            this.posX -= this.speed;
-        }
+        // set a max speed if acceleration is not given
+
+        if (this.moveLeft) 
+            if (Math.abs(this.speedX) < this.maxSpeed) 
+                this.speedX -= this.acceleration;
     
-        if (this.moveRight) {
-            this.posX += this.speed;
+        if (this.moveRight) 
+            if (Math.abs(this.speedX) < this.maxSpeed) 
+                this.speedX += this.acceleration; 
+        
+        if (this.moveUp) 
+            if (Math.abs(this.speedY) < this.maxSpeed) 
+                this.speedY -= this.acceleration;
+        
+        if (this.moveDown) 
+            if (Math.abs(this.speedY) < this.maxSpeed) 
+                this.speedY += this.acceleration;
+
+        if (this.speedX !== 0) {
+            if (Math.abs(this.speedX) <= 0.01) this.speedX = 0;
+
+            if (this.speedX > 0) this.speedX -= this.friction;
+            else this.speedX += this.friction;
         }
-    
-        if (this.moveUp) {
-            this.posY -= this.speed;
+
+        if (this.speedY !== 0) {
+            if (Math.abs(this.speedY) <= 0.01) this.speedY = 0;
+            
+            if (this.speedY > 0) this.speedY -= this.friction;
+            else this.speedY += this.friction;
         }
-    
-        if (this.moveDown) {
-            this.posY += this.speed;
-        }
+
+        this.posX += this.speedX;
+        this.posY += this.speedY;
 
     }
 

@@ -6,7 +6,10 @@ class Bullet extends Circle {
         this.speedX = speed * Math.cos(this.angle * Math.PI / 180);
         this.speedY = speed * Math.sin(this.angle * Math.PI / 180);
         this.lifeSpan = 3;
-        this.explode = false;
+        this.exploded = false;
+
+        // Damage
+        this.damage = 20;
 
         // component type
         this.type = 'bullet';
@@ -18,11 +21,16 @@ class Bullet extends Circle {
 
     move() {
         if (this.lifeSpan == 0 ) {
-            this.explode = true;
+            this.exploded = true;
         }
         
         this.posX = this.posX + this.speedX;
         this.posY = this.posY + this.speedY;
+    }
+
+    explode() {
+        this.exploded = true;
+        this.lifeSpan = 0;
     }
 
 }

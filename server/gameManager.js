@@ -26,10 +26,14 @@ class GameManager {
         // A manager for game's collision system
         this.collisionManager = new CollisionManager(this.gameComponents, this.gameMap);
 
+        // Previous number of players
+        this.currPlayerCount = 0;
+
 
     }
 
     addPlayer(socketID) {
+
         let tank;
 
         // This is the first connected player
@@ -37,7 +41,7 @@ class GameManager {
         try {
             // Spawn the tank
             const spawn = this.gameMap.getSpawnPoint();
-            tank = new Tank(spawn.coord[0], spawn.coord[1], 'forestgreen', spawn.angle);
+            tank = new Tank(spawn.coord[0], spawn.coord[1], 'forestgreen', spawn.angle, this.gameMap.friction, this.gameMap.tanksAcceleration);
             
             // Add the player's tank to the game map
             this.addComponent(tank);
@@ -45,6 +49,9 @@ class GameManager {
             // Add new player to the collection of players
             const newPlayer = new Player(socketID, tank, spawn.id);
             this.players.set(socketID, newPlayer);
+
+            // Update player count
+            this.currPlayerCount ++;
         }
         catch(error){
             console.log(error);
@@ -53,11 +60,20 @@ class GameManager {
     }
 
     removePlayer(socketID) {
-        const player = this.getPlayerBySocketID(socketID);
-        this.gameMap.restoreSpawn(player.spawnID);
-        this.gameComponents.splice(this.gameComponents.indexOf(player.tank), 1);
-        this.players.delete(socketID);
-        console.log('After removing', this.players);
+        if (this.players.has(socketID)) {
+            const player = this.getPlayerBySocketID(socketID);
+            this.gameMap.restoreSpawn(player.spawnID);
+            this.gameComponents.splice(this.gameComponents.indexOf(player.tank), 1);
+            this.players.delete(socketID);
+        }
+        
+        if (this.currPlayerCount === 2) {
+            this.players.forEach((value, key) => {
+                console.log(key, 'won!');
+            });
+        }
+        this.currPlayerCount -= 1;
+        console.log('After removing');
     }
 
     onPlayerMove(socketID, directions) {
@@ -80,13 +96,27 @@ class GameManager {
 
         components.forEach(component => {
             if (component instanceof Bullet) {
-                if (component.explode) {
+                if (component.exploded) {
                     this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
                 }
-                
             }
-            component.update()
-            this.collisionManager.detectCollision(component);
+            if (component instanceof Tank) {
+                if (component.exploded) {
+                    this.players.forEach((value, key, map) => {
+                        if (value.tank === component) {
+                            this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
+                            this.removePlayer(key);
+                        }
+                    });
+
+                }
+            }
+
+            if (!component.exploded) {
+                component.update()
+                this.collisionManager.detectCollision(component);
+            }
+
         });
     }
 
