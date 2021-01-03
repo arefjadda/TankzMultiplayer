@@ -1,5 +1,7 @@
 const express = require("express");
 const socketio = require("socket.io");
+const bodyParser = require("body-parser");
+const session = require('express-session');
 const path = require('path');
 
 // Game requirements
@@ -14,18 +16,32 @@ const server = app.listen(5000, () => {
 })
 
 
+// ==== middlewares ====
 // Static files
-app.use(express.static(path.join(__dirname, "../client")));
+app.use('/js', express.static(path.join(__dirname, "../client/js")));
+app.use('/css', express.static(path.join(__dirname, "../client/css")));
+app.use(bodyParser.json({
+    limit: "2mb",
+}));
+
+app.use(session({
+    secret: "no milk pls!",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true
+    }
+}))
 
 // Socket setup
 let io = socketio(server);
 
 
-
 /* =========== GAME LOGIC ========= */
 const FPS = 120;
-const map = new Map1('Christmas', 1000, 640);
-const game = new GameManager(io, map);
+let map = new Map1('Christmas', 1000, 640);
+let game = new GameManager(io, map);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
@@ -61,6 +77,71 @@ io.on('connection', (socket) => {
         game.removePlayer(socket.id);
     });
 });
+
+
+app.get('/', (req, res) => {
+    if (req.session.player) {
+        res.redirect('/menu');
+    } else {
+        res.sendFile(path.join(__dirname, '../client/index.html'));
+    }
+})
+
+
+app.post('/handle', (req, res) => {
+    const data = req.body;
+    if (data.handle === '') {
+        res.status(400).send('cannot have empty name/handle');
+    }
+    console.log('new player joined', data.handle);
+
+    // set the session
+    req.session.player = {
+        handle: data.handle
+    }
+
+    // redirect to menu
+    res.redirect('/menu');
+});
+
+app.get('/menu', checkSession, (req, res) => {
+    res.sendFile(path.join(__dirname,'../client/menu.html'));
+})
+
+app.get('/menu/:mapName', checkSession, (req, res) => {
+    const mapName = req.params.mapName;
+    // load the map with this mapName
+    if (mapName.toLowerCase() === 'tanksmas') {
+        res.redirect('/' + mapName);
+        res.status(200);
+    } else if (mapName.toLowerCase() === 'awaz') {
+        console.log("MUST CREATE THIS MAP");
+        res.status(500).send({error: "Coming soon!"});
+    } else {
+        res.status(404).send("no such map");
+    }
+    
+});
+
+app.get('/tanksmas', checkSession, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/map.html'));
+});
+
+// Custom 404 message
+app.get('*', (req, res) => {
+    res.status(404).send("404: Nothing to see here!");
+})
+
+
+
+// session middleware functions
+function checkSession(req, res, next) {
+    if (req.session.player) {
+        next();
+    } else {
+        res.redirect('/');
+    }
+}
 
 
 
