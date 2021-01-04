@@ -1,3 +1,5 @@
+const CollisionManager = require('../managers/collisionManager');
+
 const GameState = {
     IDLE: "idle",
     COUNTING_DOWN: "count_down",
@@ -39,18 +41,22 @@ class Game {
     }
 
     getMapName() {
-        return this.gameMap.name;
+        return this.gameMap.mapName;
+    }
+
+    getMap() {
+        return this.gameMap;
     }
 
     // ====== START: state functions ======
 
     init() {
-        setInterval(() => {
-            this.UpdateGameState();
-            this.updateComponents();
-            this.sendStates();
+        // setInterval(() => {
+        //     this.UpdateGameState();
+        //     this.updateComponents();
+        //     this.sendStates();
         
-        }, 1000 / this.FPS);
+        // }, 1000 / this.FPS);
     }
 
     idle() {
@@ -91,3 +97,5 @@ class Game {
 
 
 }
+
+module.exports = Game;

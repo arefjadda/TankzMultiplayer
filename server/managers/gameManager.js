@@ -4,10 +4,22 @@ class GameManager {
 
     }
 
-    addGame() {
+    addGame(game) {
+        this.games.push(game);
     }
 
     initGames() {
+    }
+
+    getMapByName(mapName) {
+        let map;
+        this.games.forEach(game => {
+            if (game.getMapName() === mapName.toLowerCase()) {
+                map = game.getMap();
+            }
+        });
+
+        return map; // did not find such map
     }
 
     addPlayerToGame(player, selectedMap, selectedColor) {

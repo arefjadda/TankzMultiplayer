@@ -7,6 +7,8 @@ const path = require('path');
 
 const PlayerManager = require('./managers/playerManager');
 const GameManager = require('./managers/gameManager');
+const Map1 = require("./entities/map");
+const Game = require("./entities/game");
 
 
 // App initialize
@@ -41,10 +43,18 @@ app.set('view engine', 'ejs');
 // Socket setup
 let io = socketio(server);
 
+/* ========== Game initialization ========= */
+const game1 = new Game(
+    new Map1("tanksmas", 1000, 640),
+    120
+)
 
 /* ========== Manager initialization ========= */
 const playerManager = new PlayerManager();
 const gameManager = new GameManager();
+
+// add games
+gameManager.addGame(game1);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
@@ -126,8 +136,10 @@ app.post('/menu', checkSession, (req, res) => {
 app.get('/map/:mapName', checkSession, (req, res) => {
     const selections = req.session.player.selections;
 
-    
-    res.render(path.join(__dirname, '../client/map.ejs'), {width: 1000});
+    const map = gameManager.getMapByName(selections.selectedMap);
+
+    res.render(path.join(__dirname, '../client/map.ejs'), 
+        {width: map.width, height: map.height});
 });
 
 

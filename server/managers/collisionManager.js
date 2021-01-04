@@ -1,6 +1,6 @@
-const {Rectangle} = require('./shapes');
-const Tank = require('./tank');
-const Bullet = require('./bullet');
+const {Rectangle} = require('../entities/shapes');
+const Tank = require('../entities/tank');
+const Bullet = require('../entities/bullet');
 
 class CollisionManager {
     constructor(gameComponents, gameMap) {
