@@ -9,6 +9,10 @@ class Network {
         this.socket.emit('authentication', data);
     }
 
+    sendPlayerEntry(handle) {
+        this.socket.emit('player-entry', {handle});
+    }
+
     sendMovement(data) {
         this.socket.emit('tank-movement', data);
     }

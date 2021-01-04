@@ -8,6 +8,7 @@ $(document).ready(() => {
         if (handle === '') {
             alert("handle must not be empty");
         } else {
+            // Get the correct handle
             const data = {
                 handle: handle,
             };

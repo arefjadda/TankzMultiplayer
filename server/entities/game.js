@@ -9,7 +9,7 @@ const GameState = {
 
 class Game {
     constructor(gameMap, FPS=120) {
-        this.players = [];
+        this.players = []
         this.spectators = [];
 
         // The map of the game
@@ -36,6 +36,10 @@ class Game {
     addPlayerToGame(player, selectedColor) {
         // create the tank based on the selected color and add it to the list
         // of components of this game.
+    }
+
+    getMapName() {
+        return this.gameMap.name;
     }
 
     // ====== START: state functions ======
@@ -80,8 +84,6 @@ class Game {
         //     default:
         //         break;
         // }
-
-
 
     }
 

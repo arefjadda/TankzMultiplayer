@@ -4,18 +4,26 @@ class GameManager {
 
     }
 
-    addGame(game) {
+    addGame() {
     }
 
     initGames() {
     }
 
-    addPlayerToGame(socketID, playerName, selectedMap, selectedTank) {
+    addPlayerToGame(player, selectedMap, selectedColor) {
         // create the player and add it to the game based on the 
         // selectedMap 
+        
+        this.games.forEach(game => {
+            if (game.getMapName() === selectedMap.toLowerCase()) {
+                game.addPlayerToGame(player, selectedColor);
+            }
+        });
     }
-    removePlayerBySocketID(socketID) {
+    removePlayer(player) {
         // first remove it from list of all players
         // tell the corresponding game to remove from its list
     }
 }
+
+module.exports = GameManager;

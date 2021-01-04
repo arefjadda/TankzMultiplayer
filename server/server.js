@@ -2,11 +2,11 @@ const express = require("express");
 const socketio = require("socket.io");
 const bodyParser = require("body-parser");
 const session = require('express-session');
+const ejs = require('ejs');
 const path = require('path');
 
-// Game requirements
-const GameManager = require('./gameManager');
-const Map1 = require('./map');
+const PlayerManager = require('./managers/playerManager');
+const GameManager = require('./managers/gameManager');
 
 
 // App initialize
@@ -19,7 +19,9 @@ const server = app.listen(5000, () => {
 // ==== middlewares ====
 // Static files
 app.use('/js', express.static(path.join(__dirname, "../client/js")));
+app.use('/map/js', express.static(path.join(__dirname, "../client/js")));
 app.use('/css', express.static(path.join(__dirname, "../client/css")));
+app.use('/map/css', express.static(path.join(__dirname, "../client/css")));
 app.use(bodyParser.json({
     limit: "2mb",
 }));
@@ -34,14 +36,15 @@ app.use(session({
     }
 }))
 
+app.set('view engine', 'ejs');
+
 // Socket setup
 let io = socketio(server);
 
 
-/* =========== GAME LOGIC ========= */
-const FPS = 120;
-let map = new Map1('Christmas', 1000, 640);
-let game = new GameManager(io, map);
+/* ========== Manager initialization ========= */
+const playerManager = new PlayerManager();
+const gameManager = new GameManager();
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
@@ -100,6 +103,9 @@ app.post('/handle', (req, res) => {
         handle: data.handle
     }
 
+    // add the player to the list
+    playerManager.addPlayer(data.handle);
+
     // redirect to menu
     res.redirect('/menu');
 });
@@ -108,29 +114,31 @@ app.get('/menu', checkSession, (req, res) => {
     res.sendFile(path.join(__dirname,'../client/menu.html'));
 })
 
-app.get('/menu/:mapName', checkSession, (req, res) => {
-    const mapName = req.params.mapName;
-    // load the map with this mapName
-    if (mapName.toLowerCase() === 'tanksmas') {
-        res.redirect('/' + mapName);
-        res.status(200);
-    } else if (mapName.toLowerCase() === 'awaz') {
-        console.log("MUST CREATE THIS MAP");
-        res.status(500).send({error: "Coming soon!"});
-    } else {
-        res.status(404).send("no such map");
-    }
+app.post('/menu', checkSession, (req, res) => {
+    const playerName = req.session.player.handle;
+    const selections = req.body;
     
+    req.session.player.selections = selections;
+    
+    res.redirect(`/map/${selections.selectedMap}`);
 });
 
-app.get('/tanksmas', checkSession, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/map.html'));
+app.get('/map/:mapName', checkSession, (req, res) => {
+    const selections = req.session.player.selections;
+
+    
+    res.render(path.join(__dirname, '../client/map.ejs'), {width: 1000});
 });
+
 
 // Custom 404 message
 app.get('*', (req, res) => {
-    res.status(404).send("404: Nothing to see here!");
-})
+    res.status(404).send({message: "404: Nothing to see here!"});
+});
+
+app.post("*", (req, res) => {
+    res.status(404).send({message: "404: Nothing to post here!"});
+});
 
 
 
@@ -145,12 +153,10 @@ function checkSession(req, res, next) {
 
 
 
-setInterval(() => {
-    // console.log("update");
-    game.updateComponents();
-    game.sendStates();
+// setInterval(() => {
+//     // console.log("update");
+//     game.updateComponents();
+//     game.sendStates();
 
-}, 1000 / FPS);
-
-
+// }, 1000 / FPS);
 
