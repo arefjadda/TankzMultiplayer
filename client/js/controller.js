@@ -3,7 +3,8 @@ const network = new Network('http://localhost:5000');
 myCanvas = document.getElementById("myCanvas");
 
 // Authenticate player
-network.sendPlayerAuthentication('Player');
+// network.sendPlayerAuthentication('Player');
+network.sendPlayerEntry();
 
 let leftKey = false;
 let rightKey = false;

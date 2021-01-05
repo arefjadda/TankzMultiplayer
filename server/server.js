@@ -60,34 +60,38 @@ io.on('connection', (socket) => {
     // A player/tank object needs to be to created
     console.log('user connected', socket.id);
 
+    socket.on('player-entry', (data) => {
+        socket.join('tanksmas');
+    });
+
     // Make sure to only create tank if it's the player
     socket.on('authentication', (data) => {
-        if (data === 'Player') game.addPlayer(socket.id);
+        // if (data === 'Player') game.addPlayer(socket.id);
     });
 
     socket.on('tank-movement', (data) => {
-        game.onPlayerMove(socket.id, data);
+        // game.onPlayerMove(socket.id, data);
     })
 
     socket.on('tank-shot', () => {
-        game.onPlayerShoot(socket.id);
+        // game.onPlayerShoot(socket.id);
     });
 
     // Handle chat events
     socket.on('chat', function(data){
-        console.log(data);
-        io.sockets.emit('chat', data);
+        // console.log(data);
+        // io.sockets.emit('chat', data);
     });
 
     socket.on('typing', function(data){
-        console.log(data);
-        socket.broadcast.emit('typing', data);
+        // console.log(data);
+        // socket.broadcast.emit('typing', data);
     });
     
     // Disconnect player
     socket.on('disconnect', () => {
         console.log('user disconnected', socket.id);
-        game.removePlayer(socket.id);
+        // game.removePlayer(socket.id);
     });
 });
 
