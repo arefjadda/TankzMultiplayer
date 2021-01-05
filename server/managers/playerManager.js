@@ -2,7 +2,7 @@ const { Player, PlayerState } = require('../entities/player');
 
 class PlayerManager {
     constructor() {
-        this.players = [];
+        this.players = [] ;
     }
 
     getPlayerByName(name) {
@@ -42,10 +42,11 @@ class PlayerManager {
     }
 
     removePlayer(socketID) {
-        if (!this.players.has(socketID)) {
-            throw "(500): no such socket id"
-        }
-        this.players.delete(socketID);
+        const player = this.getPlayerBySocketID(socketID);
+        this.players = this.players.filter(player => player.socketID !== socketID);
+
+        // return the removed player
+        return player;
     }
 }
 

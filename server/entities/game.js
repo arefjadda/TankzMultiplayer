@@ -5,7 +5,8 @@ const {PlayerState} = require('../entities/player');
 
 const GameState = {
     IDLE: "idle",
-    COUNTING_DOWN: "count_down",
+    STARTING_COUNTDOWN: "starting_countdown",
+    COUNTING_DOWN: "counting_down",
     STARTING: "start",
     PLAYING: "play", 
     ENDING: "end"
@@ -34,7 +35,8 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownTimer = 30;
+        this.countDownDuration = 5;
+        this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
         this.init();
@@ -47,7 +49,6 @@ class Game {
     changePlayerState(player, state) {
         player.changeState(state);
     }
-
 
     addPlayerToGame(player, selectedColor) {
         // create the tank based on the selected color and add it to the list
@@ -71,6 +72,7 @@ class Game {
             this.addComponent(tank);
             // Attach the tank to player
             player.attachTank(tank);
+            player.attachSpawnID(spawn.id);
             this.changePlayerState(player, PlayerState.PLAYING);
 
             // Add new player to the collection of players
@@ -80,10 +82,46 @@ class Game {
             this.currPlayerCount ++;
         }
         catch(error){
-            console.log(error);
+            console.log("adding to list of spectators");
+            // console.log(error.message);
             this.changePlayerState(player, PlayerState.SPECTATING);
             // add player to spectator
             this.spectators.push(player);
+        }
+    }
+
+    addPlayerToSpectators(player) {
+        this.spectators.push(player);
+        console.log('spectators:', this.spectators);
+    }
+
+    removeOwnerByTank(tank) {
+        const owner = this.players.filter(p => p.getName() === tank.owner)[0];
+        this.removePlayerTank(owner);
+        this.removePlayerFromPlayers(owner);
+        this.addPlayerToSpectators(owner);
+
+    }
+
+    removePlayerTank(player) {
+        this.gameComponents.splice(this.gameComponents.indexOf(player.tank), 1);
+    }
+
+    removePlayerFromPlayers(player) {
+        this.removePlayerTank(player);
+        this.gameMap.restoreSpawn(player.spawnID);
+        this.players = this.players.filter(p => p.socketID !== player.socketID);
+    }
+
+    removePlayerFromSpectators(player) {
+        this.spectators = this.spectators.filter(p => p.socketID !== player.socketID);
+    }
+
+    removePlayer(player) {
+        if (player.state === PlayerState.PLAYING) {
+            this.removePlayerFromPlayers(player);
+        } else if (player.state === PlayerState.SPECTATING) {
+            this.removePlayerFromSpectators(player);
         }
     }
 
@@ -99,44 +137,61 @@ class Game {
 
     init() {
         setInterval(() => {
-            // this.UpdateGameState();
+            this.updateGameState();
             this.updateComponents();
             this.sendStates();
+            this.sendGameState();
         
         }, 1000 / this.FPS);
     }
 
-    idle() {
+    startCountDown() {
+        const timer = setInterval(() => {
+            console.log(this.countDownTimer);
+            this.countDownTimer -= 1;
+            if (this.countDownTimer === 0) {
+                clearInterval(timer);
+            }
+        }, 1000);
     }
 
-    countDown() {
-    }
-
-    start() {
-    }
-
-    playing(){
-    }
-
-    end() {
+    resetCountDown() {
+        this.countDownTimer = this.countDownDuration; 
     }
 
     updateGameState() {
-        // this.state = this.nextState;
-        // switch (this.state) {
-        //     case GameState.IDLE:
-        //         if (this.players.length >= 2) {
-        //             this.nextState = GameState.COUNTING_DOWN;
-        //         }
-        //         break;
-        //     case GameState.COUNTING_DOWN:
-        //         if (this.countDownTimer == 0) {
-        //             this.nextState = GameState.STARTING;
-        //         }
+        this.state = this.nextState;
+        switch (this.state) {
+            case GameState.IDLE:
+                if (this.players.length >= 2) 
+                    this.nextState = GameState.STARTING_COUNTDOWN;
+                break;
+
+            case GameState.STARTING_COUNTDOWN:
+                this.startCountDown();
+                this.nextState = GameState.COUNTING_DOWN;
+                break;
+
+            case GameState.COUNTING_DOWN:
+                if (this.countDownTimer === 0) {
+                    this.resetCountDown();
+
+                    if (this.players.length < 2) {
+                        this.nextState = GameState.IDLE;
+                    }
+                    else {
+                        console.log("about to start homie");
+                        this.nextState = GameState.STARTING;
+                    }
+                }
+                break;
+
+            case GameState.STARTING:
+                break;
         
-        //     default:
-        //         break;
-        // }
+            default:
+                break;
+        }
 
     }
 
@@ -154,15 +209,8 @@ class Game {
                     this.addComponent(bullet);
                 }
 
-
                 if (component.exploded) {
-                    this.players.forEach((value, key, map) => {
-                        if (value.tank === component) {
-                            this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
-                            this.removePlayer(key);
-                        }
-                    });
-
+                    this.removeOwnerByTank(component);
                 }
             }
 
@@ -180,6 +228,11 @@ class Game {
             .emit('current-state', this.gameComponents);
     }
 
+    sendGameState() {
+        this.socketio
+            .to(this.getMapName())
+            .emit('game-state', { state: this.state});
+    }
     // ====== END: state functions ======
 
 

@@ -28,13 +28,20 @@ class GameManager {
         
         this.games.forEach(game => {
             if (game.getMapName() === selectedMap.toLowerCase()) {
+                // change player's current map
+                player.changeCurrentMap(game.getMapName());
                 game.addPlayerToGame(player, selectedColor);
             }
         });
     }
-    removePlayer(player) {
-        // first remove it from list of all players
+
+    removePlayerFromGame(player) {
         // tell the corresponding game to remove from its list
+        this.games.forEach(game => {
+            if (game.getMapName() === player.currentMap) {
+                game.removePlayer(player);
+            }
+        });
     }
 }
 

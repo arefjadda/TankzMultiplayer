@@ -64,10 +64,16 @@ io.on('connection', (socket) => {
         // add the player to the map name socket room
         socket.join(data.mapName);
 
+        let player = playerManager.getPlayerByName(data.playerName);
+
+        // add player, if player doesn't exist
+        if (!player) {
+            player = playerManager.addPlayer(data.playerName);
+        }
+
         // attach the socket id to the player
         playerManager.attachSocketIDToPlayer(socket.id, data.playerName);
 
-        const player = playerManager.getPlayerByName(data.playerName);
         gameManager.addPlayerToGame(player, data.mapName, data.selectedColor);
 
     });
@@ -94,7 +100,14 @@ io.on('connection', (socket) => {
     // Disconnect player
     socket.on('disconnect', () => {
         console.log('user disconnected', socket.id);
-        // game.removePlayer(socket.id);
+        
+        // remove it from the list of players
+        const removedPlayer = playerManager.removePlayer(socket.id);
+
+        // remove it from the corresponding game
+        gameManager.removePlayerFromGame(removedPlayer);
+
+        
     });
 });
 
@@ -173,4 +186,5 @@ function checkSession(req, res, next) {
         res.redirect('/');
     }
 }
+
 

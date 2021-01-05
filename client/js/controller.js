@@ -15,63 +15,67 @@ let correctKey = false;
 
 getCanvas.addEventListener('keydown', (e) => {
     if(e.repeat){return}
-    switch (e.key) {
-        case 'a':
-            // Move left
-            leftKey = true;
-            correctKey = true;
-            break;
 
-        case 'd':
-            // Move right
-            rightKey = true;
-            correctKey = true;
-            break;
-        
-        case 'w':
-            // Move up
-            upKey = true;
-            correctKey = true;
-            break;
-        
-        case 's':
-            // Move down
-            downKey = true;
-            correctKey = true;
-            break;
-        
-        case '.':
-            // Nozzle CW
-            nozzleCW = true;
-            correctKey = true;
-            break;
-        
-        case ',':
-            // Nozzle CCW
-            nozzleCCW = true;
-            correctKey = true;
-            break;
-
-        case ' ':
-            // Shoot
-            e.preventDefault();
-            correctKey = true;
-            network.sendShot();
-            break;
+    if (gameState === 'start') {
+        switch (e.key) {
+            case 'a':
+                // Move left
+                leftKey = true;
+                correctKey = true;
+                break;
     
-        default:
-            break;
+            case 'd':
+                // Move right
+                rightKey = true;
+                correctKey = true;
+                break;
+            
+            case 'w':
+                // Move up
+                upKey = true;
+                correctKey = true;
+                break;
+            
+            case 's':
+                // Move down
+                downKey = true;
+                correctKey = true;
+                break;
+            
+            case '.':
+                // Nozzle CW
+                nozzleCW = true;
+                correctKey = true;
+                break;
+            
+            case ',':
+                // Nozzle CCW
+                nozzleCCW = true;
+                correctKey = true;
+                break;
+    
+            case ' ':
+                // Shoot
+                e.preventDefault();
+                correctKey = true;
+                network.sendShot();
+                break;
+        
+            default:
+                break;
+        }
+        if (correctKey) {
+            network.sendMovement({
+                leftKey,
+                rightKey,
+                upKey,
+                downKey,
+                nozzleCW,
+                nozzleCCW
+            });
+        }
     }
-    if (correctKey) {
-        network.sendMovement({
-            leftKey,
-            rightKey,
-            upKey,
-            downKey,
-            nozzleCW,
-            nozzleCCW
-        });
-    }
+   
     
 });
 

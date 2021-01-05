@@ -5,6 +5,7 @@ class Network {
 
         // Listening on these events
         this.socket.on('current-state', this.updateState);
+        this.socket.on('game-state', this.updateGameState);
     }
 
     sendPlayerAuthentication(data) {
@@ -39,6 +40,10 @@ class Network {
                 drawWall(el);
             }
         });
+    }
+
+    updateGameState(data) {
+        gameState = data.state;
     }
 
 }

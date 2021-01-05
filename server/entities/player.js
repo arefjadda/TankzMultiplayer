@@ -13,6 +13,10 @@ class Player {
         this.tank = null;
 
         this.state = null;
+
+        this.currentMap = null;
+
+        this.spawnID = null;
     
     }
 
@@ -43,6 +47,14 @@ class Player {
 
     attachTank(tank) {
         this.tank = tank;
+    }
+
+    attachSpawnID(spawnID) {
+        this.spawnID = spawnID;
+    }
+
+    changeCurrentMap(mapName) {
+        this.currentMap = mapName;
     }
 }
 
