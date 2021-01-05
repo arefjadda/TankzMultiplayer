@@ -1,10 +1,9 @@
-// Initialize network
-const network = new Network('http://localhost:5000');
-myCanvas = document.getElementById("myCanvas");
-
-// Authenticate player
-// network.sendPlayerAuthentication('Player');
-network.sendPlayerEntry();
+// Get map name from the URL and send it through socket
+let urlSplit = document.URL.split('/'); 
+network.sendPlayerEntry(
+    urlSplit[urlSplit.length - 1], 
+    $("#playerName").val(),
+    $("#tankColor").val());
 
 let leftKey = false;
 let rightKey = false;
@@ -14,7 +13,7 @@ let nozzleCW = false;
 let nozzleCCW = false;
 let correctKey = false;
 
-myCanvas.addEventListener('keydown', (e) => {
+getCanvas.addEventListener('keydown', (e) => {
     if(e.repeat){return}
     switch (e.key) {
         case 'a':
@@ -76,7 +75,7 @@ myCanvas.addEventListener('keydown', (e) => {
     
 });
 
-myCanvas.addEventListener('keyup', (e) => {
+getCanvas.addEventListener('keyup', (e) => {
 
     switch (e.key) {
         case 'a':

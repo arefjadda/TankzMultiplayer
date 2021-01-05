@@ -2,6 +2,8 @@ class Network {
     constructor(url) {
         // TODO: get this URL from the environment variables
         this.socket = io.connect(url);
+
+        // Listening on these events
         this.socket.on('current-state', this.updateState);
     }
 
@@ -9,8 +11,11 @@ class Network {
         this.socket.emit('authentication', data);
     }
 
-    sendPlayerEntry() {
-        this.socket.emit('player-entry');
+    sendPlayerEntry(mapName, playerName, selectedColor) {
+        this.socket.emit('player-entry', {
+            mapName, 
+            playerName, 
+            selectedColor});
     }
 
     sendMovement(data) {
@@ -22,7 +27,7 @@ class Network {
     }
 
     updateState(data) {
-        canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
+        clearCanvas();
         data.forEach(el => {
             if (el.type === 'tank') {
                 drawTank(el);

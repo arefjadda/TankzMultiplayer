@@ -46,7 +46,7 @@ let io = socketio(server);
 /* ========== Game initialization ========= */
 const game1 = new Game(
     new Map1("tanksmas", 1000, 640),
-    120
+    io
 )
 
 /* ========== Manager initialization ========= */
@@ -61,20 +61,23 @@ io.on('connection', (socket) => {
     console.log('user connected', socket.id);
 
     socket.on('player-entry', (data) => {
-        socket.join('tanksmas');
-    });
+        // add the player to the map name socket room
+        socket.join(data.mapName);
 
-    // Make sure to only create tank if it's the player
-    socket.on('authentication', (data) => {
-        // if (data === 'Player') game.addPlayer(socket.id);
+        // attach the socket id to the player
+        playerManager.attachSocketIDToPlayer(socket.id, data.playerName);
+
+        const player = playerManager.getPlayerByName(data.playerName);
+        gameManager.addPlayerToGame(player, data.mapName, data.selectedColor);
+
     });
 
     socket.on('tank-movement', (data) => {
-        // game.onPlayerMove(socket.id, data);
-    })
+        playerManager.movePlayer(socket.id, data);
+    });
 
     socket.on('tank-shot', () => {
-        // game.onPlayerShoot(socket.id);
+        playerManager.playerShot(socket.id);
     });
 
     // Handle chat events
@@ -95,6 +98,8 @@ io.on('connection', (socket) => {
     });
 });
 
+
+// ======================= SERVER ENDPOINTS =================
 
 app.get('/', (req, res) => {
     if (req.session.player) {
@@ -129,7 +134,6 @@ app.get('/menu', checkSession, (req, res) => {
 })
 
 app.post('/menu', checkSession, (req, res) => {
-    const playerName = req.session.player.handle;
     const selections = req.body;
     
     req.session.player.selections = selections;
@@ -143,7 +147,10 @@ app.get('/map/:mapName', checkSession, (req, res) => {
     const map = gameManager.getMapByName(selections.selectedMap);
 
     res.render(path.join(__dirname, '../client/map.ejs'), 
-        {width: map.width, height: map.height});
+        {width: map.width, 
+         height: map.height, 
+         playerName: req.session.player.handle,
+         selectedColor: selections.selectedColor});
 });
 
 
@@ -158,7 +165,7 @@ app.post("*", (req, res) => {
 
 
 
-// session middleware functions
+// ==================== session middleware functions =================
 function checkSession(req, res, next) {
     if (req.session.player) {
         next();
@@ -166,13 +173,4 @@ function checkSession(req, res, next) {
         res.redirect('/');
     }
 }
-
-
-
-// setInterval(() => {
-//     // console.log("update");
-//     game.updateComponents();
-//     game.sendStates();
-
-// }, 1000 / FPS);
 

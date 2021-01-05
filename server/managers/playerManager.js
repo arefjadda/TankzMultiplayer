@@ -1,4 +1,4 @@
-const Player = require('../entities/player');
+const { Player, PlayerState } = require('../entities/player');
 
 class PlayerManager {
     constructor() {
@@ -8,6 +8,30 @@ class PlayerManager {
     getPlayerByName(name) {
         return this.players.filter(player => player.name === name)[0];
     }
+
+    getPlayerBySocketID(socketID) {
+        return this.players.filter(player => player.socketID === socketID)[0];
+    }
+
+    attachSocketIDToPlayer(socketID, playerName) {
+        const player = this.getPlayerByName(playerName);
+        player.attachSocketID(socketID);
+    }
+
+    movePlayer(socketID, directions) {
+        const player = this.getPlayerBySocketID(socketID);
+        if (player.state === PlayerState.PLAYING) {
+            player.moveTank(directions);
+        }
+    }
+
+    playerShot(socketID) {
+        const player = this.getPlayerBySocketID(socketID);
+        if (player.state === PlayerState.PLAYING) {
+            player.tankShot();
+        }
+    }
+
 
     addPlayer(name) {
         const newPlayer = new Player(name);

@@ -1,4 +1,7 @@
 const CollisionManager = require('../managers/collisionManager');
+const Bullet = require('../entities/bullet');
+const Tank = require('../entities/tank');
+const {PlayerState} = require('../entities/player');
 
 const GameState = {
     IDLE: "idle",
@@ -10,7 +13,7 @@ const GameState = {
 
 
 class Game {
-    constructor(gameMap, FPS=120) {
+    constructor(gameMap, socketio, FPS=120) {
         this.players = []
         this.spectators = [];
 
@@ -18,6 +21,9 @@ class Game {
         this.gameMap = gameMap;
         // List of all game components
         this.gameComponents = this.gameMap.getMapComponents();
+
+        // socketio
+        this.socketio = socketio;
 
         // A manager for game's collision system
         this.collisionManager = new CollisionManager(this.gameComponents, this.gameMap);
@@ -34,10 +40,51 @@ class Game {
         this.init();
     }
 
+    addComponent(component) {
+        this.gameComponents.push(component)
+    }
+
+    changePlayerState(player, state) {
+        player.changeState(state);
+    }
+
 
     addPlayerToGame(player, selectedColor) {
         // create the tank based on the selected color and add it to the list
         // of components of this game.
+        
+        try {
+            // TODO: If this game state is in idle/counting down then player may be added!
+
+            // Spawn the tank
+            const spawn = this.gameMap.getSpawnPoint();
+            const tank = new Tank(
+                spawn.coord[0], 
+                spawn.coord[1], 
+                selectedColor, 
+                spawn.angle, 
+                this.gameMap.friction, 
+                this.gameMap.tanksAcceleration,
+                player.getName());
+            
+            // Add the player's tank to the game map
+            this.addComponent(tank);
+            // Attach the tank to player
+            player.attachTank(tank);
+            this.changePlayerState(player, PlayerState.PLAYING);
+
+            // Add new player to the collection of players
+            this.players.push(player);
+
+            // Update player count
+            this.currPlayerCount ++;
+        }
+        catch(error){
+            console.log(error);
+            this.changePlayerState(player, PlayerState.SPECTATING);
+            // add player to spectator
+            this.spectators.push(player);
+        }
     }
 
     getMapName() {
@@ -51,12 +98,12 @@ class Game {
     // ====== START: state functions ======
 
     init() {
-        // setInterval(() => {
-        //     this.UpdateGameState();
-        //     this.updateComponents();
-        //     this.sendStates();
+        setInterval(() => {
+            // this.UpdateGameState();
+            this.updateComponents();
+            this.sendStates();
         
-        // }, 1000 / this.FPS);
+        }, 1000 / this.FPS);
     }
 
     idle() {
@@ -74,7 +121,7 @@ class Game {
     end() {
     }
 
-    UpdateGameState() {
+    updateGameState() {
         // this.state = this.nextState;
         // switch (this.state) {
         //     case GameState.IDLE:
@@ -91,6 +138,46 @@ class Game {
         //         break;
         // }
 
+    }
+
+    updateComponents() {
+        this.gameComponents.forEach(component => {
+            if (component instanceof Bullet) {
+                if (component.exploded) {
+                    this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
+                }
+            }
+            if (component instanceof Tank) {
+                // if tank has bullet ready
+                const bullet = component.getBullet();
+                if (bullet) {
+                    this.addComponent(bullet);
+                }
+
+
+                if (component.exploded) {
+                    this.players.forEach((value, key, map) => {
+                        if (value.tank === component) {
+                            this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
+                            this.removePlayer(key);
+                        }
+                    });
+
+                }
+            }
+
+            if (!component.exploded) {
+                component.update()
+                this.collisionManager.detectCollision(component);
+            }
+
+        });
+    }
+
+    sendStates() {
+        this.socketio
+            .to(this.getMapName())
+            .emit('current-state', this.gameComponents);
     }
 
     // ====== END: state functions ======

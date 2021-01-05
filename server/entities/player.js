@@ -16,6 +16,27 @@ class Player {
     
     }
 
+    getName() {
+        return this.name;
+    }
+
+    changeState(state) {
+        this.state = state;
+    }
+
+
+    moveTank(directions) {
+        if (this.tank) {
+            this.tank.updateDirections(directions);
+        }
+    }
+
+    tankShot() {
+        if (this.tank) {
+            this.tank.shoot();
+        }
+    }
+
     attachSocketID(socketID) {
         this.socketID = socketID;
     }
@@ -25,4 +46,4 @@ class Player {
     }
 }
 
-module.exports = Player;
+module.exports = { Player, PlayerState };

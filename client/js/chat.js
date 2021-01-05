@@ -1,4 +1,4 @@
-const socket = io.connect('http://localhost:5000');
+// const socket = io.connect('http://localhost:5000');
 
 // Query DOM
 const message = document.getElementById('message'),
@@ -16,14 +16,14 @@ message.addEventListener('keypress', function(e){
         });
         message.value = "";
     }
-    socket.emit('typing', handle.value);
+    // socket.emit('typing', handle.value);
 });
 
 btn.addEventListener('click', function(){
-    socket.emit('chat', {
-        message: message.value,
-        handle: handle.value
-    });
+    // socket.emit('chat', {
+    //     message: message.value,
+    //     handle: handle.value
+    // });
     message.value = "";
 });
 

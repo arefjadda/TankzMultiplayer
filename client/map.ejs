@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/tankz.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
     <!-- Socket IO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
-    <script defer src = "js/network.js"></script>
-    <!-- Game files -->
-    <script defer src="js/illustrator.js"></script>
-    <script defer src="js/controller.js"></script>
-    <!-- Chat files -->
-    <script defer src="js/chat.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tankz</title>
 </head>
 <body>
     <div id="page">
+        <!--  -->
+        <input type="hidden" id="playerName" value="<%= playerName %>">
+        <input type="hidden" id="tankColor" value="<%= selectedColor %>">
+
         <!-- Game -->
         <canvas tabindex='1' id="myCanvas" width="<%= width %>" height="<%= height %>">
         </canvas>
@@ -32,5 +31,21 @@
             <button id="send">Send</button>
         </div>
     </div>
+
+    <script src = "js/network.js"></script>
+
+    <!-- Global variables -->
+    <script >
+        // Initialize network
+        const network = new Network('http://localhost:5000');
+        let getCanvas = document.getElementById("myCanvas");
+        let ctx = getCanvas.getContext("2d");
+    </script>
+
+    <!-- Game files -->
+    <script  src="js/illustrator.js"></script>
+    <script  src="js/controller.js"></script>
+    <!-- Chat files -->
+    <script  src="js/chat.js"></script>
 </body>
 </html>

@@ -2,8 +2,9 @@ const { Rectangle } = require('./shapes');
 const Bullet = require('./bullet');
 
 class Tank extends Rectangle {
-    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1) {
+    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1, owner) {
         super(posX, posY, 75, 50);
+        this.owner = owner;
         this.reccolor = color;
         this.circolor = "black";
 
@@ -31,6 +32,8 @@ class Tank extends Rectangle {
         this.moveDown = false;
         this.rotNozzleCW = false;
         this.rotNozzleCCW = false;
+
+        this.shotBullet = null;
 
         // component type
         this.type = 'tank';
@@ -108,7 +111,13 @@ class Tank extends Rectangle {
     shoot() {
         const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
         const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
-        const bullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+        this.shotBullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+
+    }
+
+    getBullet() {
+        const bullet = this.shotBullet;
+        this.shotBullet = null;
         return bullet;
     }
 
