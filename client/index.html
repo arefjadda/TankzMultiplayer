@@ -2,35 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/tankz.css">
-    <!-- Socket IO -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
-    <script defer src = "js/network.js"></script>
-    <!-- Game files -->
-    <script defer src="js/illustrator.js"></script>
-    <script defer src="js/controller.js"></script>
-    <!-- Chat files -->
-    <script defer src="js/chat.js"></script>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script defer src="js/handle.js"></script>
     <title>Tankz</title>
 </head>
 <body>
-    <div id="page">
-        <!-- Game -->
-        <canvas tabindex='1' id="myCanvas" width="1000" height="640">
-        </canvas>
-
-        <!-- Chat -->
-        <div id="tankz-chat" height="640">
-            <div id="chat-window">
-                <div id="output"></div>
-                <div id="feedback"></div>
-            </div>
-            <input id="handle" type="text" placeholder="Name">
-            <input id="message" type="text" placeholder="Message">
-            <button id="send">Send</button>
-        </div>
-    </div>
+    <h1>Welcome to Tankz</h1>
+    <form id="handleForm">
+        <label for="handle">Name</label>
+        <input id="handleInput" type="text">
+        <button>Play</button>
+    </form>
 </body>
 </html>
