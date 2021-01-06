@@ -40,6 +40,11 @@ class Tank extends Rectangle {
         this.type = 'tank';
     }
 
+    restore() {
+        this.health = 100;
+        this.exploded = false;
+    }
+
     takeDamage(damage) {
         this.health -= damage;
         if(this.health <= 0) this.exploded = true;
@@ -82,19 +87,18 @@ class Tank extends Rectangle {
             if (Math.abs(this.speedX) <= 0.01) this.speedX = 0;
 
             if (this.speedX > 0) this.speedX -= this.friction;
-            else this.speedX += this.friction;
+            else if (this.speedX < 0) this.speedX += this.friction;
         }
 
         if (this.speedY !== 0) {
             if (Math.abs(this.speedY) <= 0.01) this.speedY = 0;
             
             if (this.speedY > 0) this.speedY -= this.friction;
-            else this.speedY += this.friction;
+            else if (this.speedY < 0) this.speedY += this.friction;
         }
 
         this.posX += this.speedX;
         this.posY += this.speedY;
-
     }
 
     rotateNozzle() {

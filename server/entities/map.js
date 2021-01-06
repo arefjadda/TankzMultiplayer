@@ -23,7 +23,7 @@ class GameMap {
         return this.mapComponents;
     }
 
-    getSpawnPoint(){
+    getSpawnPoint() {
 
         for (const spawn in this.spawnPoints) {
             if (!this.spawnPoints[spawn].used) {
@@ -31,11 +31,19 @@ class GameMap {
                 return this.spawnPoints[spawn];
             }
         }
-        throw new NoSpawnPointsError('Sorry, all spawn points in this room are already occupied.');
+        return null;
     }
 
-    restoreSpawn(spawnID){
+    restoreSpawn(spawnID) {
         this.spawnPoints['spawn' + spawnID].used = false;
+    }
+
+    getTotalSpawns() {
+        return Object.keys(this.spawnPoints).length;
+    }
+
+    getSpawnByID(spawnID) {
+        return this.spawnPoints['spawn' + spawnID];
     }
 
 }

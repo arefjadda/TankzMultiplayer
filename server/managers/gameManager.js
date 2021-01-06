@@ -30,7 +30,7 @@ class GameManager {
             if (game.getMapName() === selectedMap.toLowerCase()) {
                 // change player's current map
                 player.changeCurrentMap(game.getMapName());
-                game.addPlayerToGame(player, selectedColor);
+                game.addNewPlayerToGame(player, selectedColor);
             }
         });
     }

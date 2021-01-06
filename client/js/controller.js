@@ -16,7 +16,7 @@ let correctKey = false;
 getCanvas.addEventListener('keydown', (e) => {
     if(e.repeat){return}
 
-    if (gameState === 'start') {
+    if (gameState === 'play') {
         switch (e.key) {
             case 'a':
                 // Move left

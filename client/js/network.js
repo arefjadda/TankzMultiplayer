@@ -1,7 +1,7 @@
 class Network {
-    constructor(url) {
+    constructor() {
         // TODO: get this URL from the environment variables
-        this.socket = io.connect(url);
+        this.socket = io.connect();
 
         // Listening on these events
         this.socket.on('current-state', this.updateState);

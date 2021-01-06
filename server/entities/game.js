@@ -9,7 +9,7 @@ const GameState = {
     COUNTING_DOWN: "counting_down",
     STARTING: "start",
     PLAYING: "play", 
-    ENDING: "end"
+    ENDING: "end",
 }
 
 
@@ -32,14 +32,16 @@ class Game {
 
         // A manager for game's collision system
         this.collisionManager = new CollisionManager(this.gameComponents, this.gameMap);
-        // Previous number of players
-        this.currPlayerCount = 0;
+
+        // If game tied
+        this.isTie = false;
+        this.winner = null;
 
         this.state = GameState.IDLE;
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 2;
+        this.countDownDuration = 65;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
@@ -75,57 +77,68 @@ class Game {
     }
 
 
-    addPlayerToPlayers(player) {
+    addPlayerToPlayers(player, spawnID) {
         this.changePlayerState(player, PlayerState.PLAYING);
+        player.attachSpawnID(spawnID);
+        
+        this.initPlayerSpawn(player, spawnID);
 
         // Add new player to the collection of players
         this.players.push(player);
     }
 
-    addPlayerToGame(player, selectedColor) {
+    initPlayerSpawn(player, spawnID) {
+        player.tank.posX = this.gameMap.getSpawnByID(spawnID).coord[0];
+        player.tank.posY = this.gameMap.getSpawnByID(spawnID).coord[1];
+        player.tank.nozzleRot = this.gameMap.getSpawnByID(spawnID).angle;
+    }
+
+    addNewPlayerToGame(player, selectedColor) {
         // create the tank based on the selected color and add it to the list
         // of components of this game.
+
+        const tank = new Tank(
+            null, 
+            null, 
+            selectedColor, 
+            null, 
+            this.gameMap.friction, 
+            this.gameMap.tanksAcceleration,
+            player.getName(),
+            player.socketID);
         
-        try {
+        // Attach the tank to player
+        player.attachTank(tank);
+        
+        if (this.state === GameState.IDLE || this.state === GameState.COUNTING_DOWN)
+            this.movePlayerToGame(player);
+        else 
+            this.addPlayerToSpectators(player);
+    }
+
+    movePlayerToGame (player) {
             // TODO: If this game state is in idle/counting down then player may be added!
 
             // Spawn the tank
-            const spawn = this.gameMap.getSpawnPoint();
-            const tank = new Tank(
-                spawn.coord[0], 
-                spawn.coord[1], 
-                selectedColor, 
-                spawn.angle, 
-                this.gameMap.friction, 
-                this.gameMap.tanksAcceleration,
-                player.getName(),
-                player.socketID);
-            
+        const spawn = this.gameMap.getSpawnPoint();
+
+        if (spawn) {
+
+            this.addPlayerToPlayers(player, spawn.id);
+
             // Add the player's tank to the game map
-            this.addComponent(tank);
-            // Attach the tank to player
-            player.attachTank(tank);
-            player.attachSpawnID(spawn.id);
-            this.addPlayerToPlayers(player);
-
-            // Update player count
-            this.currPlayerCount ++;
+            this.addComponent(player.tank);
         }
-        catch(error){
-            console.log("adding to list of spectators");
-            // console.log(error.message);
+        else {
             this.addPlayerToSpectators(player);
-
         }
     }
 
 
     removeOwnerByTank(tank) {
         const owner = this.players.filter(p => p.socketID === tank.ownerID)[0];
-
         this.removePlayerFromPlayers(owner);
         this.addPlayerToSpectators(owner);
-
     }
 
     /**
@@ -176,7 +189,8 @@ class Game {
         }, 1000 / this.FPS);
     }
 
-    startCountDown() {
+    startCountDown(seconds) {
+        this.countDownTimer = seconds;
         const timer = setInterval(() => {
             console.log(this.countDownTimer);
             this.countDownTimer -= 1;
@@ -190,6 +204,29 @@ class Game {
         this.countDownTimer = this.countDownDuration; 
     }
 
+    addSpectatorsToGame() {
+        let totalSpawns = this.gameMap.getTotalSpawns();
+        console.log(totalSpawns, "totalspawns")
+        if (this.winner) {
+            totalSpawns --;
+            this.initPlayerSpawn(this.winner, this.winner.spawnID);
+        }
+        // remove the first totalSpawns spectators and add them to the game
+        for (let i=0; i < totalSpawns; i++) {
+            if (this.spectators.length > 0) {
+                this.movePlayerToGame(this.spectators.shift());
+                console.log(this.spectators, "L");
+            }
+                
+        }
+    }
+
+    restoreGameState() {
+        this.isTie = false;
+        this.winner = null;
+        this.gameComponents.tanks.forEach(tank => tank.restore());
+    }
+
     updateGameState() {
         this.state = this.nextState;
         switch (this.state) {
@@ -199,7 +236,7 @@ class Game {
                 break;
 
             case GameState.STARTING_COUNTDOWN:
-                this.startCountDown();
+                this.startCountDown(this.countDownDuration);
                 this.nextState = GameState.COUNTING_DOWN;
                 break;
 
@@ -218,6 +255,29 @@ class Game {
                 break;
 
             case GameState.STARTING:
+                this.nextState = GameState.PLAYING;
+                break;
+            
+            case GameState.PLAYING:
+                if (this.players.length === 1) {
+                    this.winner = this.players[0];
+                    this.startCountDown(5);
+                    console.log(this.winner.name, 'won');
+                    this.nextState = GameState.ENDING;
+                } else if (this.players.length === 0) {
+                    this.isTie = true;
+                    this.startCountDown(5);
+                    console.log('tie');
+                    this.nextState = GameState.ENDING;
+                }
+                break;
+
+            case GameState.ENDING:
+                if (this.countDownTimer === 0) {
+                    this.addSpectatorsToGame();
+                    this.restoreGameState();
+                    this.nextState = GameState.IDLE;
+                }
                 break;
         
             default:
@@ -225,6 +285,7 @@ class Game {
         }
 
     }
+
 
     sendGameState() {
         this.socketio
