@@ -8,22 +8,19 @@ class CollisionManager {
         this.gameMap = gameMap;
     }
 
-    rectOnrectCollision(rect1, rect2) {
-        if (rect1.posX < rect2.posX + rect2.width &&
+    rectOnRectCollision(rect1, rect2) {
+        return rect1.posX < rect2.posX + rect2.width &&
             rect1.posX + rect1.width > rect2.posX &&
             rect1.posY < rect2.posY + rect2.height &&
-            rect1.posY + rect1.height > rect2.posY) {
+            rect1.posY + rect1.height > rect2.posY;
 
-            return true;
-        }
-        return false;
     }
 
     circleOnRectCollision(circle, rect) {
         // Nearest edge of rectangle to the circle in the x direction 
         let nearestEdgeX = circle.posX;
 
-        // Nearest edge of rectangle to the circle in the y direciton
+        // Nearest edge of rectangle to the circle in the y direction
         let nearestEdgeY = circle.posY;
 
         if (circle.posX <= rect.posX) {                      // near the left edge
@@ -44,8 +41,8 @@ class CollisionManager {
         // Calculating the distance
         const distX = circle.posX - nearestEdgeX;
         const distY = circle.posY - nearestEdgeY;
-;
-        // Eculidean distance
+
+        // Euclidean distance
         const distance = Math.sqrt((distX * distX) + (distY * distY));
         
         return {
@@ -56,10 +53,8 @@ class CollisionManager {
 
     circleOnCircleCollision(circle1, circle2) {
         const distance = Math.sqrt((circle1.posX - circle2.posX)**2 + (circle1.posY - circle2.posY)**2);
-        if (circle1.radius + circle2.radius >= distance) {
-            return true;
-        }
-        return false;
+        return circle1.radius + circle2.radius >= distance;
+
     }
 
     /* ====== TANK Collision ===== */
@@ -107,30 +102,32 @@ class CollisionManager {
     }
 
     detectRectForTank(tank) {
-        this.gameComponents.forEach((component) => {
-            if (component != tank && 
-                component instanceof Rectangle && 
-                this.rectOnrectCollision(tank, component)) {   
-                if (tank.posX + tank.width < component.posX + tank.maxSpeed + tank.acceleration / 2) {
-                    tank.speedX = 0;
-                    tank.posX = component.posX - tank.width;
-                }
+        // tanks and walls are rectangles
+        this.gameComponents.tanks.concat(this.gameComponents.walls)
+            .forEach((component) => {
+                if (component !== tank &&
+                    component instanceof Rectangle &&
+                    this.rectOnRectCollision(tank, component)) {
+                    if (tank.posX + tank.width < component.posX + tank.maxSpeed + tank.acceleration / 2) {
+                        tank.speedX = 0;
+                        tank.posX = component.posX - tank.width;
+                    }
 
-                if (tank.posX > component.posX + component.width - tank.maxSpeed - tank.acceleration / 2) {
-                    tank.speedX = 0;
-                    tank.posX = component.posX + component.width;
-                }
+                    if (tank.posX > component.posX + component.width - tank.maxSpeed - tank.acceleration / 2) {
+                        tank.speedX = 0;
+                        tank.posX = component.posX + component.width;
+                    }
 
-                if (tank.posY > component.posY + component.height - tank.maxSpeed - tank.acceleration / 2) {
-                    tank.speedY = 0;
-                    tank.posY = component.posY + component.height;
-                }
+                    if (tank.posY > component.posY + component.height - tank.maxSpeed - tank.acceleration / 2) {
+                        tank.speedY = 0;
+                        tank.posY = component.posY + component.height;
+                    }
 
-                if (tank.posY + tank.height < component.posY + tank.maxSpeed + tank.acceleration / 2) {
-                    tank.speedY = 0;
-                    tank.posY = component.posY - tank.height;
+                    if (tank.posY + tank.height < component.posY + tank.maxSpeed + tank.acceleration / 2) {
+                        tank.speedY = 0;
+                        tank.posY = component.posY - tank.height;
+                    }
                 }
-            }  
         });
     }
 
@@ -157,8 +154,10 @@ class CollisionManager {
     }
 
     detectRectForBullet(bullet) {
-        this.gameComponents.forEach(component => {
-            if (component != this && component instanceof Rectangle) {
+        // tanks and walls are rectangles
+        this.gameComponents.tanks.concat(this.gameComponents.walls)
+            .forEach(component => {
+                if (component !== this && component instanceof Rectangle) {
 
                 const collisionResult = this.circleOnRectCollision(bullet, component);
 
@@ -184,8 +183,8 @@ class CollisionManager {
     }
 
     detectBulletForBullet(bullet) {
-        this.gameComponents.forEach(component => {
-            if (component != bullet && 
+        this.gameComponents.bullets.forEach(component => {
+            if (component !== bullet &&
                 component instanceof Bullet &&
                 // collision detected
                 this.circleOnCircleCollision(bullet, component)) {

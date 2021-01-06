@@ -20,7 +20,7 @@ class PlayerManager {
 
     movePlayer(socketID, directions) {
         const player = this.getPlayerBySocketID(socketID);
-        if (player.state === PlayerState.PLAYING) {
+        if (player && player.state === PlayerState.PLAYING) {
             player.moveTank(directions);
         }
     }

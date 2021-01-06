@@ -27,18 +27,23 @@ class Network {
         this.socket.emit('tank-shot');
     }
 
+    /**
+     *
+     * @param {{tanks: array, bullets: array, walls: array}} data - a collection of game components
+     */
     updateState(data) {
         clearCanvas();
-        data.forEach(el => {
-            if (el.type === 'tank') {
-                drawTank(el);
-            }
-            if (el.type === 'bullet') {
-                drawBullet(el);
-            }
-            if (el.type === 'wall') {
-                drawWall(el);
-            }
+
+        data.tanks.forEach((tank) => {
+            drawTank(tank);
+        });
+
+        data.bullets.forEach((bullet) => {
+            drawBullet(bullet);
+        });
+
+        data.walls.forEach((wall) => {
+            drawWall(wall);
         });
     }
 

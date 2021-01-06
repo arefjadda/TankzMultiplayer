@@ -37,7 +37,7 @@ function drawTank(tank) {
 function drawBullet(bullet) {
     ctx.beginPath();
     ctx.arc(bullet.posX, bullet.posY, bullet.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "red"; // TODO: move back
+    ctx.fillStyle = "red"; // TODO: move to backend
     ctx.fill();
 }
 

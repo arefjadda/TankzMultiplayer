@@ -21,7 +21,11 @@ class Game {
         // The map of the game
         this.gameMap = gameMap;
         // List of all game components
-        this.gameComponents = this.gameMap.getMapComponents();
+        this.gameComponents = {
+            tanks: [],
+            bullets: [],
+            walls: this.gameMap.getMapComponents(),
+        }
 
         // socketio
         this.socketio = socketio;
@@ -35,7 +39,7 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 5;
+        this.countDownDuration = 2;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
@@ -43,7 +47,14 @@ class Game {
     }
 
     addComponent(component) {
-        this.gameComponents.push(component)
+        if (component instanceof Tank) {
+            this.gameComponents.tanks.push(component)
+        } else if (component instanceof Bullet) {
+            this.gameComponents.bullets.push(component)
+        } else {
+            throw "can't add component to the list of components"
+        }
+
     }
 
     changePlayerState(player, state) {
@@ -66,7 +77,8 @@ class Game {
                 spawn.angle, 
                 this.gameMap.friction, 
                 this.gameMap.tanksAcceleration,
-                player.getName());
+                player.getName(),
+                player.socketID);
             
             // Add the player's tank to the game map
             this.addComponent(tank);
@@ -92,19 +104,31 @@ class Game {
 
     addPlayerToSpectators(player) {
         this.spectators.push(player);
-        console.log('spectators:', this.spectators);
     }
 
     removeOwnerByTank(tank) {
-        const owner = this.players.filter(p => p.getName() === tank.owner)[0];
-        this.removePlayerTank(owner);
+        const owner = this.players.filter(p => p.socketID === tank.ownerID)[0];
+
         this.removePlayerFromPlayers(owner);
         this.addPlayerToSpectators(owner);
 
     }
 
+    /**
+     * Remove player tank component from game
+     * @param {Player} player - player object
+     */
     removePlayerTank(player) {
-        this.gameComponents.splice(this.gameComponents.indexOf(player.tank), 1);
+        let tankIndx = -1;
+        for (let i = 0; i < this.gameComponents.tanks.length; i++) {
+            if (this.gameComponents.tanks[i].ownerID === player.socketID) {
+                tankIndx = i;
+            }
+        }
+
+        // make sure the tank is actually player's
+        this.gameComponents.tanks.splice(tankIndx, 1);
+
     }
 
     removePlayerFromPlayers(player) {
@@ -118,6 +142,7 @@ class Game {
     }
 
     removePlayer(player) {
+        console.log('removing player');
         if (player.state === PlayerState.PLAYING) {
             this.removePlayerFromPlayers(player);
         } else if (player.state === PlayerState.SPECTATING) {
@@ -196,30 +221,36 @@ class Game {
     }
 
     updateComponents() {
-        this.gameComponents.forEach(component => {
-            if (component instanceof Bullet) {
-                if (component.exploded) {
-                    this.gameComponents.splice(this.gameComponents.indexOf(component), 1);
-                }
-            }
-            if (component instanceof Tank) {
-                // if tank has bullet ready
-                const bullet = component.getBullet();
-                if (bullet) {
-                    this.addComponent(bullet);
-                }
+        // Loop through bullets
+        this.gameComponents.bullets.forEach(bullet => {
+            // if bullet is exploded, remove bullet from bullet list
+            if (bullet.exploded) {
+                this.gameComponents.bullets.splice(this.gameComponents.bullets.indexOf(bullet), 1);
 
-                if (component.exploded) {
-                    this.removeOwnerByTank(component);
-                }
+            } else {
+                bullet.update()
+                this.collisionManager.detectCollision(bullet);
             }
-
-            if (!component.exploded) {
-                component.update()
-                this.collisionManager.detectCollision(component);
-            }
-
         });
+
+        // Loop through tanks
+        this.gameComponents.tanks.forEach(tank => {
+            // if tank has bullet ready
+            const bullet = tank.getBullet();
+            if (bullet) {
+                this.addComponent(bullet);
+            }
+
+            // if tank is exploded, remove tank from tank list
+            if (tank.exploded) {
+                this.removeOwnerByTank(tank);
+
+            } else {
+                tank.update()
+                this.collisionManager.detectCollision(tank);
+            }
+        });
+
     }
 
     sendStates() {

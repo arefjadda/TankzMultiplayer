@@ -2,7 +2,6 @@ const express = require("express");
 const socketio = require("socket.io");
 const bodyParser = require("body-parser");
 const session = require('express-session');
-const ejs = require('ejs');
 const path = require('path');
 
 const PlayerManager = require('./managers/playerManager');

@@ -36,6 +36,9 @@ class GameManager {
     }
 
     removePlayerFromGame(player) {
+        // if player doesn't exist then do not proceed
+        if (!player) return;
+
         // tell the corresponding game to remove from its list
         this.games.forEach(game => {
             if (game.getMapName() === player.currentMap) {

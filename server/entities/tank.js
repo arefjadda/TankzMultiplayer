@@ -2,9 +2,10 @@ const { Rectangle } = require('./shapes');
 const Bullet = require('./bullet');
 
 class Tank extends Rectangle {
-    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1, owner) {
+    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1, owner, ownerID) {
         super(posX, posY, 75, 50);
         this.owner = owner;
+        this.ownerID = ownerID;
         this.reccolor = color;
         this.circolor = "black";
 
