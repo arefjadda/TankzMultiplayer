@@ -46,6 +46,14 @@ class Game {
         this.init();
     }
 
+    getMapName() {
+        return this.gameMap.mapName;
+    }
+
+    getMap() {
+        return this.gameMap;
+    }
+
     addComponent(component) {
         if (component instanceof Tank) {
             this.gameComponents.tanks.push(component)
@@ -59,6 +67,19 @@ class Game {
 
     changePlayerState(player, state) {
         player.changeState(state);
+    }
+
+    addPlayerToSpectators(player) {
+        this.changePlayerState(player, PlayerState.SPECTATING);
+        this.spectators.push(player);
+    }
+
+
+    addPlayerToPlayers(player) {
+        this.changePlayerState(player, PlayerState.PLAYING);
+
+        // Add new player to the collection of players
+        this.players.push(player);
     }
 
     addPlayerToGame(player, selectedColor) {
@@ -85,10 +106,7 @@ class Game {
             // Attach the tank to player
             player.attachTank(tank);
             player.attachSpawnID(spawn.id);
-            this.changePlayerState(player, PlayerState.PLAYING);
-
-            // Add new player to the collection of players
-            this.players.push(player);
+            this.addPlayerToPlayers(player);
 
             // Update player count
             this.currPlayerCount ++;
@@ -96,15 +114,11 @@ class Game {
         catch(error){
             console.log("adding to list of spectators");
             // console.log(error.message);
-            this.changePlayerState(player, PlayerState.SPECTATING);
-            // add player to spectator
-            this.spectators.push(player);
+            this.addPlayerToSpectators(player);
+
         }
     }
 
-    addPlayerToSpectators(player) {
-        this.spectators.push(player);
-    }
 
     removeOwnerByTank(tank) {
         const owner = this.players.filter(p => p.socketID === tank.ownerID)[0];
@@ -148,14 +162,6 @@ class Game {
         } else if (player.state === PlayerState.SPECTATING) {
             this.removePlayerFromSpectators(player);
         }
-    }
-
-    getMapName() {
-        return this.gameMap.mapName;
-    }
-
-    getMap() {
-        return this.gameMap;
     }
 
     // ====== START: state functions ======
@@ -220,6 +226,13 @@ class Game {
 
     }
 
+    sendGameState() {
+        this.socketio
+            .to(this.getMapName())
+            .emit('game-state', { state: this.state});
+    }
+    // ====== END: state functions ======
+
     updateComponents() {
         // Loop through bullets
         this.gameComponents.bullets.forEach(bullet => {
@@ -258,13 +271,6 @@ class Game {
             .to(this.getMapName())
             .emit('current-state', this.gameComponents);
     }
-
-    sendGameState() {
-        this.socketio
-            .to(this.getMapName())
-            .emit('game-state', { state: this.state});
-    }
-    // ====== END: state functions ======
 
 
 }
