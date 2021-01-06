@@ -4,12 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script defer src="js/mapSelection.js"></script>
     <title>Tankz: Menu</title>
 </head>
 
 <body>
-    <h1><a href="/menu/tanksmas">1. Tanksmas</a></h1>
-    <h1><a href="/menu/awaz">2. Ahwaz</a></h1>
+    <form id="mapSelectionForm">
+        <select name="tankColors" id="maps" required>
+            <!-- <option value="" disabled selected hidden>Please Choose Map...</option> -->
+            <option value="tanksmas" selected>Tanksmas</option>
+            <option value="awaz">Awaz</option>
+        </select>
+    
+        <select name="tankColors" id="tankColors" required>
+            <!-- <option value="" disabled selected hidden>Please Choose Color...</option> -->
+            <option value="green" selected>green</option>
+            <option value="red">red</option>
+        </select>
+
+        <button type="submit" id="joinBtn" disabled>Join</button>
+    </form>
+    
 </body>
 
 </html>

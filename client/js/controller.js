@@ -1,9 +1,9 @@
-// Initialize network
-const network = new Network('http://localhost:5000');
-myCanvas = document.getElementById("myCanvas");
-
-// Authenticate player
-network.sendPlayerAuthentication('Player');
+// Get map name from the URL and send it through socket
+let urlSplit = document.URL.split('/'); 
+network.sendPlayerEntry(
+    urlSplit[urlSplit.length - 1], 
+    $("#playerName").val(),
+    $("#tankColor").val());
 
 let leftKey = false;
 let rightKey = false;
@@ -13,69 +13,73 @@ let nozzleCW = false;
 let nozzleCCW = false;
 let correctKey = false;
 
-myCanvas.addEventListener('keydown', (e) => {
+getCanvas.addEventListener('keydown', (e) => {
     if(e.repeat){return}
-    switch (e.key) {
-        case 'a':
-            // Move left
-            leftKey = true;
-            correctKey = true;
-            break;
 
-        case 'd':
-            // Move right
-            rightKey = true;
-            correctKey = true;
-            break;
-        
-        case 'w':
-            // Move up
-            upKey = true;
-            correctKey = true;
-            break;
-        
-        case 's':
-            // Move down
-            downKey = true;
-            correctKey = true;
-            break;
-        
-        case '.':
-            // Nozzle CW
-            nozzleCW = true;
-            correctKey = true;
-            break;
-        
-        case ',':
-            // Nozzle CCW
-            nozzleCCW = true;
-            correctKey = true;
-            break;
-
-        case ' ':
-            // Shoot
-            e.preventDefault();
-            correctKey = true;
-            network.sendShot();
-            break;
+    if (gameState === 'play') {
+        switch (e.key) {
+            case 'a':
+                // Move left
+                leftKey = true;
+                correctKey = true;
+                break;
     
-        default:
-            break;
+            case 'd':
+                // Move right
+                rightKey = true;
+                correctKey = true;
+                break;
+            
+            case 'w':
+                // Move up
+                upKey = true;
+                correctKey = true;
+                break;
+            
+            case 's':
+                // Move down
+                downKey = true;
+                correctKey = true;
+                break;
+            
+            case '.':
+                // Nozzle CW
+                nozzleCW = true;
+                correctKey = true;
+                break;
+            
+            case ',':
+                // Nozzle CCW
+                nozzleCCW = true;
+                correctKey = true;
+                break;
+    
+            case ' ':
+                // Shoot
+                e.preventDefault();
+                correctKey = true;
+                network.sendShot();
+                break;
+        
+            default:
+                break;
+        }
+        if (correctKey) {
+            network.sendMovement({
+                leftKey,
+                rightKey,
+                upKey,
+                downKey,
+                nozzleCW,
+                nozzleCCW
+            });
+        }
     }
-    if (correctKey) {
-        network.sendMovement({
-            leftKey,
-            rightKey,
-            upKey,
-            downKey,
-            nozzleCW,
-            nozzleCCW
-        });
-    }
+   
     
 });
 
-myCanvas.addEventListener('keyup', (e) => {
+getCanvas.addEventListener('keyup', (e) => {
 
     switch (e.key) {
         case 'a':

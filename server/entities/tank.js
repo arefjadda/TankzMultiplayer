@@ -2,8 +2,10 @@ const { Rectangle } = require('./shapes');
 const Bullet = require('./bullet');
 
 class Tank extends Rectangle {
-    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1) {
+    constructor(posX, posY, color, nozzleRot, mapFriction = 0.5, acceleration = 1, owner, ownerID) {
         super(posX, posY, 75, 50);
+        this.owner = owner;
+        this.ownerID = ownerID;
         this.reccolor = color;
         this.circolor = "black";
 
@@ -32,8 +34,15 @@ class Tank extends Rectangle {
         this.rotNozzleCW = false;
         this.rotNozzleCCW = false;
 
+        this.shotBullet = null;
+
         // component type
         this.type = 'tank';
+    }
+
+    restore() {
+        this.health = 100;
+        this.exploded = false;
     }
 
     takeDamage(damage) {
@@ -78,19 +87,18 @@ class Tank extends Rectangle {
             if (Math.abs(this.speedX) <= 0.01) this.speedX = 0;
 
             if (this.speedX > 0) this.speedX -= this.friction;
-            else this.speedX += this.friction;
+            else if (this.speedX < 0) this.speedX += this.friction;
         }
 
         if (this.speedY !== 0) {
             if (Math.abs(this.speedY) <= 0.01) this.speedY = 0;
             
             if (this.speedY > 0) this.speedY -= this.friction;
-            else this.speedY += this.friction;
+            else if (this.speedY < 0) this.speedY += this.friction;
         }
 
         this.posX += this.speedX;
         this.posY += this.speedY;
-
     }
 
     rotateNozzle() {
@@ -108,7 +116,13 @@ class Tank extends Rectangle {
     shoot() {
         const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
         const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
-        const bullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+        this.shotBullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+
+    }
+
+    getBullet() {
+        const bullet = this.shotBullet;
+        this.shotBullet = null;
         return bullet;
     }
 

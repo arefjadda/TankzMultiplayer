@@ -1,12 +1,22 @@
 class Network {
-    constructor(url) {
+    constructor() {
         // TODO: get this URL from the environment variables
-        this.socket = io.connect(url);
+        this.socket = io.connect();
+
+        // Listening on these events
         this.socket.on('current-state', this.updateState);
+        this.socket.on('game-state', this.updateGameState);
     }
 
     sendPlayerAuthentication(data) {
         this.socket.emit('authentication', data);
+    }
+
+    sendPlayerEntry(mapName, playerName, selectedColor) {
+        this.socket.emit('player-entry', {
+            mapName, 
+            playerName, 
+            selectedColor});
     }
 
     sendMovement(data) {
@@ -17,19 +27,28 @@ class Network {
         this.socket.emit('tank-shot');
     }
 
+    /**
+     *
+     * @param {{tanks: array, bullets: array, walls: array}} data - a collection of game components
+     */
     updateState(data) {
-        canvas.clearRect(0, 0, getCanvas.width, getCanvas.height);
-        data.forEach(el => {
-            if (el.type === 'tank') {
-                drawTank(el);
-            }
-            if (el.type === 'bullet') {
-                drawBullet(el);
-            }
-            if (el.type === 'wall') {
-                drawWall(el);
-            }
+        clearCanvas();
+
+        data.tanks.forEach((tank) => {
+            drawTank(tank);
         });
+
+        data.bullets.forEach((bullet) => {
+            drawBullet(bullet);
+        });
+
+        data.walls.forEach((wall) => {
+            drawWall(wall);
+        });
+    }
+
+    updateGameState(data) {
+        gameState = data.state;
     }
 
 }

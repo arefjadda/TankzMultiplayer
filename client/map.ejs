@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/tankz.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <!-- Socket IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tankz</title>
+</head>
+<body>
+    <div id="page">
+        <!--  -->
+        <input type="hidden" id="playerName" value="<%= playerName %>">
+        <input type="hidden" id="tankColor" value="<%= selectedColor %>">
+
+        <!-- Game -->
+        <canvas tabindex='1' id="myCanvas" width="<%= width %>" height="<%= height %>">
+        </canvas>
+
+        <!-- Chat -->
+        <div id="tankz-chat" height="640">
+            <div id="chat-window">
+                <div id="output"></div>
+                <div id="feedback"></div>
+            </div>
+            <input id="handle" type="text" placeholder="Name">
+            <input id="message" type="text" placeholder="Message">
+            <button id="send">Send</button>
+        </div>
+    </div>
+
+    <script src = "js/network.js"></script>
+
+    <!-- Global variables -->
+    <script >
+        // Initialize network
+        const network = new Network('http://localhost:5000');
+        let getCanvas = document.getElementById("myCanvas");
+        let ctx = getCanvas.getContext("2d");
+
+        let gameState = null;
+    </script>
+
+    <!-- Game files -->
+    <script  src="js/illustrator.js"></script>
+    <script  src="js/controller.js"></script>
+    <!-- Chat files -->
+    <script  src="js/chat.js"></script>
+</body>
+</html>

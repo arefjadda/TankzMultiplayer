@@ -1,43 +1,52 @@
-let getCanvas = document.getElementById("myCanvas");
-let canvas = getCanvas.getContext("2d");
-
 function drawTank(tank) {
     
-    canvas.fillStyle = tank.reccolor;
-    canvas.fillRect(tank.posX, tank.posY, tank.width, tank.height);
+    ctx.fillStyle = tank.reccolor;
+    ctx.fillRect(tank.posX, tank.posY, tank.width, tank.height);
     
-    canvas.beginPath();
-    canvas.arc((tank.posX + (tank.width / 2)), (tank.posY + (tank.height / 2)), tank.height / 3, 0, 2 * Math.PI);
-    canvas.fillStyle = tank.circolor;
-    canvas.fill();
+    ctx.beginPath();
+    ctx.arc((tank.posX + (tank.width / 2)), (tank.posY + (tank.height / 2)), tank.height / 3, 0, 2 * Math.PI);
+    ctx.fillStyle = tank.circolor;
+    ctx.fill();
     
     // Rotate the nozzle
-    canvas.save();
-    canvas.translate(tank.posX + (tank.width / 2), tank.posY + (tank.height / 2));
-    canvas.rotate(tank.nozzleRot * Math.PI / 180);
-    canvas.translate(-(tank.posX + (tank.width / 2)), - (tank.posY + (tank.height / 2)));
-    canvas.fillStyle = tank.nozzleColor;
-    canvas.fillRect(tank.posX + (tank.width / 2), tank.posY + (tank.height / 2) - 4.5, 50, 9);
-    canvas.restore();
+    ctx.save();
+    ctx.translate(tank.posX + (tank.width / 2), tank.posY + (tank.height / 2));
+    ctx.rotate(tank.nozzleRot * Math.PI / 180);
+    ctx.translate(-(tank.posX + (tank.width / 2)), - (tank.posY + (tank.height / 2)));
+    ctx.fillStyle = tank.nozzleColor;
+    ctx.fillRect(tank.posX + (tank.width / 2), tank.posY + (tank.height / 2) - 4.5, 50, 9);
+    ctx.restore();
 
     // Draw health bar
-    canvas.fillStyle = "red";
-    canvas.fillRect(tank.posX, tank.posY - 20, tank.width, 5);
-    canvas.fillStyle = "lightgreen";
-    canvas.fillRect(tank.posX, tank.posY - 20, tank.width * tank.health / 100, 5);
-    canvas.strokeStyle = "black";
-    canvas.strokeRect(tank.posX, tank.posY - 20, tank.width, 5);
+    ctx.fillStyle = "red";
+    ctx.fillRect(tank.posX, tank.posY - 10, tank.width, 5);
+    ctx.fillStyle = "lightgreen";
+    ctx.fillRect(tank.posX, tank.posY - 10, tank.width * tank.health / 100, 5);
+    ctx.strokeStyle = "black";
+    ctx.strokeRect(tank.posX, tank.posY - 10, tank.width, 5);
+
+    // draw name
+    const fontSize = 15;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center"; 
+    ctx.fillText(tank.owner, tank.posX + (tank.width / 2), tank.posY - 14)
 
 }
 
 function drawBullet(bullet) {
-    canvas.beginPath();
-    canvas.arc(bullet.posX, bullet.posY, bullet.radius, 0, 2 * Math.PI);
-    canvas.fillStyle = "red"; // TODO: move back
-    canvas.fill();
+    ctx.beginPath();
+    ctx.arc(bullet.posX, bullet.posY, bullet.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "red"; // TODO: move to backend
+    ctx.fill();
 }
 
 function drawWall(wall) {
-    canvas.fillStyle = wall.color;
-    canvas.fillRect(wall.posX, wall.posY, wall.width, wall.height);
+    ctx.fillStyle = wall.color;
+    ctx.fillRect(wall.posX, wall.posY, wall.width, wall.height);
+}
+
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, getCanvas.width, getCanvas.height);
 }
