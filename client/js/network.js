@@ -6,10 +6,7 @@ class Network {
         // Listening on these events
         this.socket.on('current-state', this.updateState);
         this.socket.on('game-state', this.updateGameState);
-    }
-
-    sendPlayerAuthentication(data) {
-        this.socket.emit('authentication', data);
+        this.socket.on('chat', this.writeMessage);
     }
 
     sendPlayerEntry(mapName, playerName, selectedColor) {
@@ -25,6 +22,11 @@ class Network {
 
     sendShot() {
         this.socket.emit('tank-shot');
+    }
+
+    // Send chat events
+    sendMessage(data) {
+        this.socket.emit('chat', data);
     }
 
     /**
@@ -49,6 +51,14 @@ class Network {
 
     updateGameState(data) {
         gameState = data.state;
+    }
+
+    // Chat update functions
+
+    writeMessage(data) {
+        console.log('received')
+        feedback.innerHTML = '';
+        output.innerHTML += ('<p><strong>' + data.handle + ': </strong>' + data.message + '</p>');
     }
 
 }

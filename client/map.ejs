@@ -26,7 +26,6 @@
                 <div id="output"></div>
                 <div id="feedback"></div>
             </div>
-            <input id="handle" type="text" placeholder="Name">
             <input id="message" type="text" placeholder="Message">
             <button id="send">Send</button>
         </div>
@@ -42,6 +41,10 @@
         let ctx = getCanvas.getContext("2d");
 
         let gameState = null;
+
+        // Chat
+        output = document.getElementById('output'),
+        feedback = document.getElementById('feedback');
     </script>
 
     <!-- Game files -->

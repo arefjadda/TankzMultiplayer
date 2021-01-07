@@ -41,7 +41,7 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 65;
+        this.countDownDuration = 10;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
