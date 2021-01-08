@@ -137,7 +137,7 @@ const message = $("#message"),
     handle = $("#playerName"),
     btn = $("#send");
 
-message.on('keypress', function(e){
+message.on('keypress', function(e) {
     if (e.key === 'Enter' && message.val() !== "") {
         network.sendMessage({
             handle: handle.val(),
@@ -146,7 +146,7 @@ message.on('keypress', function(e){
     }
 });
 
-btn.on('click', function(){
+btn.on('click', function() {
     if (message.val() !== "") {
         network.sendMessage({
             handle: handle.val(),
