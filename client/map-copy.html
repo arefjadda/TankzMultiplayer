@@ -12,20 +12,9 @@
 </head>
 <body>
     <div id="page">
-        <!-- hidden variables -->
+        <!--  -->
         <input type="hidden" id="playerName" value="<%= playerName %>">
         <input type="hidden" id="tankColor" value="<%= selectedColor %>">
-
-        <div id="userList">
-            <div id="players">
-                <h3>Players</h3>
-                <div id="playerList"></div>
-            </div>
-            <div id="spectators">
-                <h3>Spectators</h3>
-                <div id="spectatorList"></div>
-            </div>
-        </div>
 
         <!-- Game -->
         <canvas tabindex='1' id="myCanvas" width="<%= width %>" height="<%= height %>">
@@ -56,11 +45,6 @@
         // Chat
         let output = document.getElementById('output');
         let feedback = document.getElementById('feedback');
-
-        // user list
-        let playerList = document.getElementById('playerList');
-        let spectatorList = document.getElementById('spectatorList');
-
     </script>
 
     <!-- Game files -->
