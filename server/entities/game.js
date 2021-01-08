@@ -41,7 +41,7 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 65;
+        this.countDownDuration = 10;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
@@ -74,6 +74,7 @@ class Game {
     addPlayerToSpectators(player) {
         this.changePlayerState(player, PlayerState.SPECTATING);
         this.spectators.push(player);
+        this.sendUserList();
     }
 
 
@@ -85,6 +86,7 @@ class Game {
 
         // Add new player to the collection of players
         this.players.push(player);
+        this.sendUserList();
     }
 
     initPlayerSpawn(player, spawnID) {
@@ -175,6 +177,7 @@ class Game {
         } else if (player.state === PlayerState.SPECTATING) {
             this.removePlayerFromSpectators(player);
         }
+        this.sendUserList();
     }
 
     // ====== START: state functions ======
@@ -331,6 +334,15 @@ class Game {
         this.socketio
             .to(this.getMapName())
             .emit('current-state', this.gameComponents);
+    }
+
+    sendUserList() {
+        this.socketio
+            .to(this.getMapName())
+            .emit('user-lists',{
+                players: this.players,
+                spectators: this.spectators
+            });
     }
 
 

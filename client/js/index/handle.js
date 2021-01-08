@@ -1,3 +1,6 @@
+/**
+ * Sends the player's name/handle to the backend.
+ */
 $(document).ready(() => {
     const form = $("#handleForm");
     const handleInput = $("#handleInput");

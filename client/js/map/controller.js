@@ -131,6 +131,29 @@ getCanvas.addEventListener('keyup', (e) => {
     });
 });
 
+// Chat
+
+const message = $("#message"),
+    handle = $("#playerName"),
+    btn = $("#send");
+
+message.on('keypress', function(e) {
+    if (e.key === 'Enter' && message.val() !== "") {
+        network.sendMessage({
+            handle: handle.val(),
+            message: message.val()});
+        message.val("");
+    }
+});
+
+btn.on('click', function() {
+    if (message.val() !== "") {
+        network.sendMessage({
+            handle: handle.val(),
+            message: message.val()});
+        message.val("");
+    }
+});
 
 
 

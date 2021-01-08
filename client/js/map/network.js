@@ -1,3 +1,6 @@
+/**
+ * This is the socket network between the client and the backend
+ */
 class Network {
     constructor() {
         // TODO: get this URL from the environment variables
@@ -6,10 +9,8 @@ class Network {
         // Listening on these events
         this.socket.on('current-state', this.updateState);
         this.socket.on('game-state', this.updateGameState);
-    }
-
-    sendPlayerAuthentication(data) {
-        this.socket.emit('authentication', data);
+        this.socket.on('chat', this.writeMessage);
+        this.socket.on('user-lists', this.updateUserList);
     }
 
     sendPlayerEntry(mapName, playerName, selectedColor) {
@@ -27,7 +28,13 @@ class Network {
         this.socket.emit('tank-shot');
     }
 
+    // Send chat events
+    sendMessage(data) {
+        this.socket.emit('chat', data);
+    }
+
     /**
+     * Listens for updated states from server.
      *
      * @param {{tanks: array, bullets: array, walls: array}} data - a collection of game components
      */
@@ -49,6 +56,31 @@ class Network {
 
     updateGameState(data) {
         gameState = data.state;
+    }
+
+    /**
+     * Listens for updated user list from server.
+     * @param {{players: array, spectators: array}} data - A list of players and spectators
+     */
+    updateUserList(data) {
+        // clear player list
+        playerList.innerHTML = '';
+        spectatorList.innerHTML = '';
+        data.players.forEach(p => {
+            playerList.innerHTML += `<p>${p.name}<p>`;
+        });
+
+        data.spectators.forEach(s => {
+           spectatorList.innerHTML += `<p>${s.name}</p>`;
+        });
+    }
+
+    // Chat update functions
+
+    writeMessage(data) {
+        console.log('received')
+        feedback.innerHTML = '';
+        output.innerHTML += ('<p><strong>' + data.handle + ': </strong>' + data.message + '</p>');
     }
 
 }
