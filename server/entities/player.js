@@ -1,4 +1,5 @@
-// const Tank = require('./tank');
+const { User } = require('../utils/models/user');
+
 const PlayerState = {
     SPECTATING: 'spectating',
     PLAYING: 'playing'
@@ -7,6 +8,7 @@ const PlayerState = {
 class Player {
     constructor(name) {
         this.name = name;
+        this.gameWins = 0;
 
         this.socketID = null;
 
@@ -17,7 +19,8 @@ class Player {
         this.currentMap = null;
 
         this.spawnID = null;
-    
+
+
     }
 
     getName() {
@@ -56,6 +59,31 @@ class Player {
     changeCurrentMap(mapName) {
         this.currentMap = mapName;
     }
+
+    getWinsLosses() {
+        const playerDB = User.findOne({name: this.name});
+        return {
+            wins: playerDB.wins,
+            losses: playerDB.losses
+        }
+    }
+
+    incrementWin() {
+        this.gameWins ++;
+        User.findOneAndUpdate(
+            {name: this.name},
+            {$inc: {'wins': 1}},
+            (err, res) => { if (err) console.log(err)});
+
+    }
+
+    incrementLosses() {
+        User.findOneAndUpdate(
+            {name: this.name},
+            {$inc: {'losses': 1}},
+            (err, res) => {if (err) console.log(err)});
+    }
+
 }
 
 module.exports = { Player, PlayerState };

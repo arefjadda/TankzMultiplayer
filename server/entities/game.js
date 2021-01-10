@@ -1,7 +1,7 @@
 const CollisionManager = require('../managers/collisionManager');
 const Bullet = require('../entities/bullet');
 const Tank = require('../entities/tank');
-const {PlayerState} = require('../entities/player');
+const { PlayerState } = require('../entities/player');
 
 const GameState = {
     IDLE: "idle",
@@ -98,6 +98,7 @@ class Game {
     addNewPlayerToGame(player, selectedColor) {
         // create the tank based on the selected color and add it to the list
         // of components of this game.
+        player.gameWins = 0;
 
         const tank = new Tank(
             null, 
@@ -136,11 +137,20 @@ class Game {
         }
     }
 
-
+    /**
+     * When player tank explodes find the owner by tank, and
+     * move player to spectators.
+     * Also, increment number of losses of the player
+     *
+     * @param tank
+     */
     removeOwnerByTank(tank) {
         const owner = this.players.filter(p => p.socketID === tank.ownerID)[0];
         this.removePlayerFromPlayers(owner);
         this.addPlayerToSpectators(owner);
+
+        // increment
+        owner.incrementLosses();
     }
 
     /**
@@ -195,7 +205,7 @@ class Game {
     startCountDown(seconds) {
         this.countDownTimer = seconds;
         const timer = setInterval(() => {
-            console.log(this.countDownTimer);
+            this.sendCountDown();
             this.countDownTimer -= 1;
             if (this.countDownTimer === 0) {
                 clearInterval(timer);
@@ -265,7 +275,10 @@ class Game {
                 if (this.players.length === 1) {
                     this.winner = this.players[0];
                     this.startCountDown(5);
+
+                    this.winner.incrementWin();
                     console.log(this.winner.name, 'won');
+
                     this.nextState = GameState.ENDING;
                 } else if (this.players.length === 0) {
                     this.isTie = true;
@@ -345,6 +358,13 @@ class Game {
             });
     }
 
+    sendCountDown() {
+        this.socketio
+            .to(this.getMapName())
+            .emit('count-down', {
+                timer: this.countDownTimer
+            });
+    }
 
 }
 
