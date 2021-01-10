@@ -9,6 +9,8 @@ const PlayerManager = require('./managers/playerManager');
 const GameManager = require('./managers/gameManager');
 const Map1 = require("./entities/map");
 const Game = require("./entities/game");
+const { mongoose } = require('./utils/database');
+const { User } = require('./utils/models/user');
 
 
 // App initialize
@@ -117,23 +119,48 @@ app.get('/', (req, res) => {
 })
 
 
-app.post('/handle', (req, res) => {
+app.post('/user', (req, res) => {
     const data = req.body;
-    if (data.handle === '') {
-        res.status(400).send('cannot have empty name/handle');
-    }
-    console.log('new player joined', data.handle);
+    User.findByNameAndPassword(data.handle, data.password).then((user) => {
+        if (!user) {
+            // insert the user in the database
+            const newUser = new User({
+                name: data.handle,
+                password: data.password
+            });
 
-    // set the session
-    req.session.player = {
-        handle: data.handle
-    }
+            return newUser.save()
+        }
+        if (playerManager.getPlayerByName(data.handle)) {
+            return Promise.reject('already logged in from different browser');
+        }
+        return Promise.resolve('user exists and password matches');
+    }).then((result) => {
+        // set the session
+        req.session.player = {
+            handle: data.handle
+        }
 
-    // add the player to the list
-    playerManager.addPlayer(data.handle);
+        // add the player to the list
+        playerManager.addPlayer(data.handle);
 
-    // redirect to menu
-    res.redirect('/menu');
+        // redirect to menu
+        res.redirect('/menu');
+    }).catch((err) => {
+        // this is when user exists in the database but the password is wrong!
+        let message = '';
+        if (err.errors){
+            for (let errorsKey in err.errors) {
+
+                message += err.errors[errorsKey].message + ';\n';
+            }
+
+        } else {
+            message = err;
+        }
+        res.status(400).send(message);
+    });
+
 });
 
 app.get('/menu', checkSession, (req, res) => {
