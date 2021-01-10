@@ -32,4 +32,4 @@ jobs:
           docker_build_args: |
             MONGO_URI
         env:
-          MONGO_URI=${{secrets.MONGO_URI}}
+          MONGO_URI: ${{secrets.MONGO_URI}}
