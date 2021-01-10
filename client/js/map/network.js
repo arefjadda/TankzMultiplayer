@@ -11,6 +11,7 @@ class Network {
         this.socket.on('game-state', this.updateGameState);
         this.socket.on('chat', this.writeMessage);
         this.socket.on('user-lists', this.updateUserList);
+        this.socket.on('count-down', this.countDownUpdate);
     }
 
     sendPlayerEntry(mapName, playerName, selectedColor) {
@@ -67,12 +68,16 @@ class Network {
         playerList.innerHTML = '';
         spectatorList.innerHTML = '';
         data.players.forEach(p => {
-            playerList.innerHTML += `<p>${p.name}<p>`;
+            playerList.innerHTML += `<p>${p.name } (${p.gameWins})<p>`;
         });
 
         data.spectators.forEach(s => {
-           spectatorList.innerHTML += `<p>${s.name}</p>`;
+           spectatorList.innerHTML += `<p>${s.name} (${s.gameWins})</p>`;
         });
+    }
+
+    countDownUpdate(data) {
+        console.log(data.timer);
     }
 
     // Chat update functions
