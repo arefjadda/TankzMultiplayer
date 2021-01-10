@@ -15,7 +15,7 @@ const { User } = require('./utils/models/user');
 
 // App initialize
 const app = express();
-const server = app.listen(5000, () => {
+const server = app.listen(process.env.PORT || 5000, () => {
     console.log('listening to requests on port 5000')
 })
 
