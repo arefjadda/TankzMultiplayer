@@ -14,7 +14,6 @@ let nozzleCCW = false;
 let correctKey = false;
 
 getCanvas.addEventListener('keydown', (e) => {
-    if(e.repeat){return}
 
     if (gameState === 'play') {
         switch (e.key) {
@@ -75,8 +74,6 @@ getCanvas.addEventListener('keydown', (e) => {
             });
         }
     }
-   
-    
 });
 
 getCanvas.addEventListener('keyup', (e) => {
