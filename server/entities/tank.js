@@ -43,6 +43,12 @@ class Tank extends Rectangle {
     restore() {
         this.health = 100;
         this.exploded = false;
+        this.moveLeft = false;
+        this.moveRight = false;
+        this.moveUp = false;
+        this.moveDown = false;
+        this.rotNozzleCW = false;
+        this.rotNozzleCCW = false;
     }
 
     takeDamage(damage) {
