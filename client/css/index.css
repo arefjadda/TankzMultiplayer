@@ -74,3 +74,13 @@ html, body {
     transform: rotate(180deg);
     z-index: 1;
   }
+
+  .tank:nth-of-type(2) { filter: invert(100%); }
+  .tank:nth-of-type(3) { filter: invert(100%) hue-rotate(75deg); }
+  .tank:nth-of-type(4) { filter: invert(100%) hue-rotate(150deg); }
+  .tank:nth-of-type(5) { filter: invert(100%) hue-rotate(225deg); }
+  .tank:nth-of-type(6) { filter: invert(100%) hue-rotate(300deg); }
+  .tank:nth-of-type(7) { filter: hue-rotate(75deg); }
+  .tank:nth-of-type(8) { filter: hue-rotate(150deg); }
+  .tank:nth-of-type(9) { filter: hue-rotate(225deg); }
+  .tank:nth-of-type(10) { filter: hue-rotate(300deg); }
