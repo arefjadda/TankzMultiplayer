@@ -38,9 +38,9 @@ $(document).ready(() => {
                     return res.text();
                 }
             }).then((clientErr) => {
-                alert(clientErr);
+                if (clientErr) alert(clientErr);
             }).catch((err) => {
-                alert('something went wrong ' + err.message);
+                alert('Something went wrong: ' + err.message);
                 console.error(err);
             });
             
