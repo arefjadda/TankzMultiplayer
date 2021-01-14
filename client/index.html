@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script defer src="js/design.js"></script>
     <script defer src="js/index/login.js"></script>
     <title>Tankz</title>
 </head>
 <body>
-    <h1>Welcome to Tankz</h1>
-    <form id="handleForm">
-        <label>Name</label>
-        <input id="handleInput" type="text" required>
-        <br>
-        <label>Password</label>
-        <input id="passwordInput" type="password" name="password" required>
-        <br>
-        <button>Play</button>
-    </form>
+    <div id="container">
+        <h1 id="title">Welcome to Tankz</h1>
+        <form id="handleForm">
+            <label>Name</label>
+            <br>
+            <input id="handleInput" type="text" required placeholder="Username">
+            <br>
+            <label>Password</label>
+            <br>
+            <input id="passwordInput" type="password" name="password" required placeholder="Password">
+            <br>
+            <button id="button">Play</button>
+        </form>
+    </div>
 </body>
 </html>

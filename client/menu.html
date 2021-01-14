@@ -4,27 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/menu.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+    <script defer src="js/design.js"></script>
     <script defer src="js/menu/mapSelection.js"></script>
     <title>Tankz: Menu</title>
 </head>
 
 <body>
-    <form id="mapSelectionForm">
-        <select name="tankColors" id="maps" required>
-            <!-- <option value="" disabled selected hidden>Please Choose Map...</option> -->
-            <option value="tanksmas" selected>Tanksmas</option>
-            <option value="awaz">Awaz</option>
-        </select>
-    
-        <select name="tankColors" id="tankColors" required>
-            <!-- <option value="" disabled selected hidden>Please Choose Color...</option> -->
-            <option value="green" selected>green</option>
-            <option value="red">red</option>
-        </select>
-
-        <button type="submit" id="joinBtn" disabled>Join</button>
-    </form>
+    <div id="container">
+        <form id="mapSelectionForm">
+            <select name="tankColors" id="maps" required>
+                <!-- <option value="" disabled selected hidden>Please Choose Map...</option> -->
+                <option value="" disabled selected>Select Map</option>
+                <option value="tanksmas">Tanksmas</option>
+                <option value="awaz">Awaz</option>
+            </select>
+            <br>
+            <select name="tankColors" id="tankColors" required>
+                <!-- <option value="" disabled selected hidden>Please Choose Color...</option> -->
+                <option value="" disabled selected>Select Tank Color</option>
+                <option value="green" style="background-color: green;">green</option>
+                <option value="red" style="background-color: red;">red</option>
+                <option value="maroon" style="background-color: maroon;">maroon</option>
+                <option value="orange" style="background-color: orange;">orange</option>
+                <option value="yellow" style="background-color: yellow;">yellow</option>
+                <option value="olive" style="background-color: olive;">olive</option>
+                <option value="purple" style="background-color: purple;">purple</option>
+                <option value="fuchsia" style="background-color: fuchsia;">fuchsia</option>
+                <option value="white" style="background-color: white;">white</option>
+                <option value="lime" style="background-color: lime;">lime</option>
+                <option value="navy" style="background-color: navy;">navy</option>
+                <option value="blue" style="background-color: blue;">blue</option>
+                <option value="aqua" style="background-color: aqua;">aqua</option>
+                <option value="teal" style="background-color: teal;">teal</option>
+                <option value="black" style="background-color: black;">black</option>
+                <option value="silver" style="background-color: silver;">silver</option>
+                <option value="pink" style="background-color: pink;">pink</option>
+                <option value="gray" style="background-color: gray;">gray</option>
+            </select>
+            <br>
+            <button type="submit" id="joinBtn" disabled>Join</button>
+        </form>
+    </div>
     
 </body>
 
