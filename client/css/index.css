@@ -73,7 +73,7 @@ html, body {
     background-size: contain;
     transform: rotate(180deg);
     z-index: 1;
-  }
+}
 
   .tank:nth-of-type(2) { filter: invert(100%); }
   .tank:nth-of-type(3) { filter: invert(100%) hue-rotate(75deg); }
