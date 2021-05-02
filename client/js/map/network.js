@@ -5,13 +5,20 @@ class Network {
     constructor() {
         // TODO: get this URL from the environment variables
         this.socket = io.connect();
+        this.explodedBullets = [];
+
+        
+        let network = this;
 
         // Listening on these events
-        this.socket.on('current-state', this.updateState);
+        this.socket.on('current-state', function closure(data) { 
+            network.updateState(data, network.explodedBullets); 
+        });
         this.socket.on('game-state', this.updateGameState);
         this.socket.on('chat', this.writeMessage);
         this.socket.on('user-lists', this.updateUserList);
         this.socket.on('count-down', this.countDownUpdate);
+
     }
 
     sendPlayerEntry(mapName, playerName, selectedColor) {
@@ -39,7 +46,7 @@ class Network {
      *
      * @param {{tanks: array, bullets: array, walls: array}} data - a collection of game components
      */
-    updateState(data) {
+    updateState(data, explodedBullets) {
         clearCanvas();
 
         data.tanks.forEach((tank) => {
@@ -47,12 +54,20 @@ class Network {
         });
 
         data.bullets.forEach((bullet) => {
-            drawBullet(bullet);
+            if (bullet.exploded) {
+                bullet.explosionSpan = 60;
+                explodedBullets.push(bullet);
+            }
+            else{
+                drawBullet(bullet);
+            }
         });
 
         data.walls.forEach((wall) => {
             drawWall(wall);
         });
+
+        drawBulletsExplosions(explodedBullets);
     }
 
     updateGameState(data) {

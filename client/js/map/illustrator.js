@@ -47,6 +47,54 @@ function drawWall(wall) {
 }
 
 
+function drawBulletsExplosions(explodedBullets) {
+    // if there exist exploded bullets then draw them
+    if (explodedBullets) {
+        const colors = ['red', 'orange', 'yellow', 'rgb(200, 0, 0)'];
+        explodedBullets.forEach(bullet => {
+
+            let scale = 60 - bullet.explosionSpan;
+            for (let index = 0; index < 5 + Math.floor(Math.random() * 6); index++) {
+                ctx.beginPath();
+
+                ctx.arc(
+                        bullet.posX + (Math.round(Math.random()) ? 1 : -1) * Math.floor(Math.random() * scale/5), 
+                        bullet.posY + (Math.round(Math.random()) ? 1 : -1) * Math.floor(Math.random() * scale/5), 
+                        3 + Math.floor(Math.random() * scale/6) , 
+                        0, 
+                        2 * Math.PI
+                    );
+
+                ctx.fillStyle = colors[Math.floor(Math.random() * 4)] //`rgba(${142 + Math.floor(Math.random() * 120)}, ${42 + Math.floor(Math.random() * 120)}, ${0 + Math.floor(Math.random() * 20)}, ${0.3 + Math.floor(Math.random() * 8) * 0.1})`;
+                ctx.fill();    
+            }
+            for (let index = 0; index < 5 + Math.floor(Math.random() * 10); index++) {
+                ctx.beginPath();
+
+                ctx.arc(
+                        bullet.posX + (Math.round(Math.random()) ? 1 : -1) * Math.floor(Math.random() * scale/2), 
+                        bullet.posY + (Math.round(Math.random()) ? 1 : -1) * Math.floor(Math.random() * scale/2), 
+                        1 + Math.floor(Math.random() * 2), 
+                        0, 
+                        2 * Math.PI
+                    );
+
+                ctx.fillStyle = 'gray' //`rgba(${142 + Math.floor(Math.random() * 120)}, ${42 + Math.floor(Math.random() * 120)}, ${0 + Math.floor(Math.random() * 20)}, ${0.3 + Math.floor(Math.random() * 8) * 0.1})`;
+                ctx.fill();    
+            }
+
+            
+
+            bullet.explosionSpan--;
+            if (bullet.explosionSpan == 0) {
+                // remove it from the explodedBullets
+                explodedBullets.splice( explodedBullets.indexOf(bullet), 1);
+            }
+        });
+    }
+}   
+
+
 function clearCanvas() {
     ctx.clearRect(0, 0, getCanvas.width, getCanvas.height);
 }
