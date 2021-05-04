@@ -197,6 +197,12 @@ class Game {
             this.updateGameState();
             this.updateComponents();
             this.sendStates();
+
+            // remove the bullet from tank so that client knows the shot was fired
+            this.gameComponents.tanks.forEach(tank => { 
+                tank.reloadBullet();
+            });
+
             this.sendGameState();
         
         }, 1000 / this.FPS);
@@ -238,6 +244,7 @@ class Game {
         this.isTie = false;
         this.winner = null;
         this.gameComponents.tanks.forEach(tank => tank.restore());
+        this.gameComponents.bullets = [];
     }
 
     updateGameState() {
@@ -316,6 +323,13 @@ class Game {
             // if bullet is exploded, remove bullet from bullet list
             if (bullet.exploded) {
                 this.gameComponents.bullets.splice(this.gameComponents.bullets.indexOf(bullet), 1);
+                
+                // ensures that owner cannot have more than 3 existing bullets in the game
+                const owner = this.players.filter(p => p.socketID === bullet.ownerID)[0];
+                if (owner)
+                {
+                    owner.tank.availableBullets++;
+                }
 
             } else {
                 bullet.update()

@@ -50,16 +50,30 @@ class Network {
         clearCanvas();
 
         data.tanks.forEach((tank) => {
+            if (tank.shotBullet)
+            {
+                let audio = new Audio('../assets/bullet_fire.mp3');
+                audio.play();
+            }
             drawTank(tank);
         });
 
         data.bullets.forEach((bullet) => {
             if (bullet.exploded) {
+                let audio = new Audio('../assets/explosion2.mp3');
+                audio.play();
+
                 bullet.explosionSpan = 60;
                 explodedBullets.push(bullet);
             }
             else{
                 drawBullet(bullet);
+            }
+
+            if (bullet.hitWall) {
+                let audio = new Audio('../assets/pong.mp3');
+                audio.volume = 0.3;
+                audio.play();
             }
         });
 

@@ -23,6 +23,7 @@ const server = app.listen(process.env.PORT || 5000, () => {
 // ==== middlewares ====
 // Static files
 app.use('/js', express.static(path.join(__dirname, "../client/js")));
+app.use('/assets', express.static(path.join(__dirname, "../client/assets")));
 app.use('/map/js', express.static(path.join(__dirname, "../client/js")));
 app.use('/css', express.static(path.join(__dirname, "../client/css")));
 app.use('/map/css', express.static(path.join(__dirname, "../client/css")));
