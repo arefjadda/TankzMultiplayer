@@ -94,6 +94,19 @@ function drawBulletsExplosions(explodedBullets) {
     }
 }   
 
+function drawTimer(time) {
+    clearCanvas();
+
+    const fontSize = 60;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center"; 
+    ctx.fillText(time.toString(), 100, 100);
+
+    console.log(time);
+
+}
+
 
 function clearCanvas() {
     ctx.clearRect(0, 0, getCanvas.width, getCanvas.height);

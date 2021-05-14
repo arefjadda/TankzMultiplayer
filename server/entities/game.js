@@ -213,7 +213,7 @@ class Game {
         const timer = setInterval(() => {
             this.sendCountDown();
             this.countDownTimer -= 1;
-            if (this.countDownTimer === 0) {
+            if (this.countDownTimer === -1) { // it's -1 so that the client shows the "Go" text on zero
                 clearInterval(timer);
             }
         }, 1000);

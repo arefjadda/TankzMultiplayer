@@ -43,12 +43,10 @@ class Network {
 
     /**
      * Listens for updated states from server.
-     *
+     *f
      * @param {{tanks: array, bullets: array, walls: array}} data - a collection of game components
      */
     updateState(data, explodedBullets) {
-        clearCanvas();
-
         data.tanks.forEach((tank) => {
             if (tank.shotBullet)
             {
@@ -106,7 +104,7 @@ class Network {
     }
 
     countDownUpdate(data) {
-        console.log(data.timer);
+        drawTimer(data.timer);
     }
 
     // Chat update functions
