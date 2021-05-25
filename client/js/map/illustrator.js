@@ -95,16 +95,54 @@ function drawBulletsExplosions(explodedBullets) {
 }   
 
 function drawTimer(time) {
-    clearCanvas();
-
-    const fontSize = 60;
-    ctx.font = `${fontSize}px Arial`;
+    clearCircle(ctx, getCanvas.width / 2, getCanvas.height / 2, 50)
+    ctx.beginPath();
+    ctx.arc(getCanvas.width / 2, getCanvas.height / 2, 50, 0, 2 * Math.PI);
     ctx.fillStyle = "black";
+    ctx.fill();
+    
+
+    const fontSize = 55;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "white";
     ctx.textAlign = "center"; 
-    ctx.fillText(time.toString(), 100, 100);
+
+    if (time === 2 || time === 1 || time === 0) {
+        ctx.fillText("GO", getCanvas.width / 2, getCanvas.height / 2 + 20);
+    } else {
+        ctx.fillText((time - 2).toString(), getCanvas.width / 2, getCanvas.height / 2 + 20);
+    }
 
     console.log(time);
 
+}
+
+function drawWinner(winner) {
+    const fontSize = 65;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+
+    ctx.fillText(winner.name + " won!", getCanvas.width / 2, getCanvas.height / 2 + 20);
+
+}
+
+function drawIdleEvent() {
+    const fontSize = 30;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+
+    ctx.fillText("Wait for others to join!", getCanvas.width / 2, getCanvas.height / 2 + 20);
+}
+
+function clearCircle(ctx,x,y,radius) {
+	ctx.save();
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, 2*Math.PI, true);
+	ctx.clip();
+	ctx.clearRect(x-radius,y-radius,radius*2,radius*2);
+	ctx.restore();
 }
 
 

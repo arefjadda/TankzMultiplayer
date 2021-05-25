@@ -41,7 +41,8 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 3;
+        this.countDownDuration = 5;
+        this.showWinnerDuration = 5;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
@@ -213,7 +214,7 @@ class Game {
         const timer = setInterval(() => {
             this.sendCountDown();
             this.countDownTimer -= 1;
-            if (this.countDownTimer === -1) { // it's -1 so that the client shows the "Go" text on zero
+            if (this.countDownTimer === 0) {
                 clearInterval(timer);
             }
         }, 1000);
@@ -281,7 +282,7 @@ class Game {
             case GameState.PLAYING:
                 if (this.players.length === 1) {
                     this.winner = this.players[0];
-                    this.startCountDown(5);
+                    this.startCountDown(this.showWinnerDuration);
 
                     this.winner.incrementWin();
                     console.log(this.winner.name, 'won');
@@ -289,13 +290,18 @@ class Game {
                     this.nextState = GameState.ENDING;
                 } else if (this.players.length === 0) {
                     this.isTie = true;
-                    this.startCountDown(5);
+                    this.startCountDown(this.showWinnerDuration);
                     console.log('tie');
                     this.nextState = GameState.ENDING;
                 }
                 break;
 
             case GameState.ENDING:
+                if (this.countDownTimer === this.showWinnerDuration)
+                {
+                    this.sendWinner();
+                }
+                
                 if (this.countDownTimer === 0) {
                     this.addSpectatorsToGame();
                     this.restoreGameState();
@@ -377,6 +383,15 @@ class Game {
             .to(this.getMapName())
             .emit('count-down', {
                 timer: this.countDownTimer
+            });
+    }
+
+    sendWinner()
+    {
+        this.socketio
+            .to(this.getMapName())
+            .emit('winner', {
+                winner: this.winner
             });
     }
 

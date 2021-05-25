@@ -7,7 +7,7 @@ const path = require('path');
 
 const PlayerManager = require('./managers/playerManager');
 const GameManager = require('./managers/gameManager');
-const Map1 = require("./entities/map");
+const {Map1, Map2} = require("./entities/map");
 const Game = require("./entities/game");
 const { mongoose } = require('./utils/database');
 const { User } = require('./utils/models/user');
@@ -52,12 +52,18 @@ const game1 = new Game(
     io
 )
 
+const game2 = new Game(
+    new Map2("awaz", 1000, 640),
+    io
+)
+
 /* ========== Manager initialization ========= */
 const playerManager = new PlayerManager();
 const gameManager = new GameManager();
 
 // add games
 gameManager.addGame(game1);
+gameManager.addGame(game2);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created

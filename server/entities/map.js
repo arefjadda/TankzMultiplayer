@@ -100,4 +100,44 @@ class Map1 extends GameMap {
     }
 }
 
-module.exports = Map1;
+
+class Map2 extends GameMap {
+    constructor(mapName, width, height) {
+        super(mapName, width, height);
+
+        const wall1 = new RectWall(this.width / 2 - 150,
+              this.height / 2 - 200,
+              80, 400, 'gray')
+
+        const wall2 = new RectWall(this.width / 2 + 70,
+            this.height / 2 - 200,
+            80, 400, 'gray')
+        
+        // add the two walls to the map's list of components
+        this.addMapComponent(wall1);
+        this.addMapComponent(wall2);
+
+        // ground friction and tanks accelerations for this map
+        this.friction = 0.01;
+        this.tanksAcceleration = 0.03;
+        
+        this.spawnPoints = {
+            spawn1: {
+                used: false,
+                coord: [20, this.height / 2],
+                angle: 0,
+                id: 1
+            },
+            
+            spawn2: {
+                used: false,
+                coord: [this.width - 20, this.height / 2],
+                angle: 180,
+                id: 2
+            }
+        }
+        
+    }
+}
+
+module.exports = {Map1, Map2};
