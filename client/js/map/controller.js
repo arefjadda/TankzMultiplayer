@@ -60,8 +60,7 @@ getCanvas.addEventListener('keydown', (e) => {
                 e.preventDefault();
                 correctKey = true;
                 network.sendShot();
-                break;
-        
+    
             default:
                 break;
         }

@@ -134,6 +134,7 @@ class CollisionManager {
     /* ====== Bullet Collision ===== */
 
     detectCollisionForBullet(bullet) {
+        bullet.hitWall = false;
         this.detectBorderForBullet(bullet);
         this.detectRectForBullet(bullet);
         this.detectBulletForBullet(bullet);
@@ -144,12 +145,20 @@ class CollisionManager {
             bullet.posX + bullet.radius > this.gameMap.width) {
             bullet.speedX *= -1;
             bullet.lifeSpan -= 1;
+
+            if ( bullet.lifeSpan > 0) {
+                bullet.hitWall = true;
+            }
         } 
         
         if (bullet.posY + bullet.radius < 0 ||
             bullet.posY + bullet.radius > this.gameMap.height) {
             bullet.speedY *= -1;
             bullet.lifeSpan -= 1;
+
+            if ( bullet.lifeSpan > 0) {
+                bullet.hitWall = true;
+            }
         }
     }
 
@@ -164,16 +173,22 @@ class CollisionManager {
                 if (collisionResult.collided) {
                     if (collisionResult.horizontalCollision) { // hits the horizontal wall
                         bullet.speedY *= -1;
+                        bullet.hitWall = true;
                     } else {
                         bullet.speedX *= -1;
+                        bullet.hitWall = true;
                     }
 
                     // max 2 bounces unless it hits a tank
                     if (component instanceof Tank){
                         component.takeDamage(bullet.damage);
                         bullet.explode()
+                        bullet.hitWall = false;
                     } else {
                         bullet.lifeSpan -= 1;
+                        if ( bullet.lifeSpan == 0) {
+                            bullet.hitWall = false;
+                        }
                     }
                 }
                     

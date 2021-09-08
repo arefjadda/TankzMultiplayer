@@ -41,7 +41,8 @@ class Game {
         this.nextState = this.state;
 
         /* timer countdown in seconds */
-        this.countDownDuration = 10;
+        this.countDownDuration = 5;
+        this.showWinnerDuration = 5;
         this.countDownTimer = this.countDownDuration;
         this.FPS = FPS;
 
@@ -197,6 +198,12 @@ class Game {
             this.updateGameState();
             this.updateComponents();
             this.sendStates();
+
+            // remove the bullet from tank so that client knows the shot was fired
+            this.gameComponents.tanks.forEach(tank => { 
+                tank.reloadBullet();
+            });
+
             this.sendGameState();
         
         }, 1000 / this.FPS);
@@ -238,6 +245,7 @@ class Game {
         this.isTie = false;
         this.winner = null;
         this.gameComponents.tanks.forEach(tank => tank.restore());
+        this.gameComponents.bullets = [];
     }
 
     updateGameState() {
@@ -261,7 +269,7 @@ class Game {
                         this.nextState = GameState.IDLE;
                     }
                     else {
-                        console.log("about to start homie");
+                        console.log("about to start");
                         this.nextState = GameState.STARTING;
                     }
                 }
@@ -274,7 +282,7 @@ class Game {
             case GameState.PLAYING:
                 if (this.players.length === 1) {
                     this.winner = this.players[0];
-                    this.startCountDown(5);
+                    this.startCountDown(this.showWinnerDuration);
 
                     this.winner.incrementWin();
                     console.log(this.winner.name, 'won');
@@ -282,13 +290,18 @@ class Game {
                     this.nextState = GameState.ENDING;
                 } else if (this.players.length === 0) {
                     this.isTie = true;
-                    this.startCountDown(5);
+                    this.startCountDown(this.showWinnerDuration);
                     console.log('tie');
                     this.nextState = GameState.ENDING;
                 }
                 break;
 
             case GameState.ENDING:
+                if (this.countDownTimer === this.showWinnerDuration)
+                {
+                    this.sendWinner();
+                }
+                
                 if (this.countDownTimer === 0) {
                     this.addSpectatorsToGame();
                     this.restoreGameState();
@@ -316,6 +329,13 @@ class Game {
             // if bullet is exploded, remove bullet from bullet list
             if (bullet.exploded) {
                 this.gameComponents.bullets.splice(this.gameComponents.bullets.indexOf(bullet), 1);
+                
+                // ensures that owner cannot have more than 3 existing bullets in the game
+                const owner = this.players.filter(p => p.socketID === bullet.ownerID)[0];
+                if (owner)
+                {
+                    owner.tank.availableBullets++;
+                }
 
             } else {
                 bullet.update()
@@ -363,6 +383,15 @@ class Game {
             .to(this.getMapName())
             .emit('count-down', {
                 timer: this.countDownTimer
+            });
+    }
+
+    sendWinner()
+    {
+        this.socketio
+            .to(this.getMapName())
+            .emit('winner', {
+                winner: this.winner
             });
     }
 

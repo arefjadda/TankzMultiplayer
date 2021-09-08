@@ -7,7 +7,7 @@ const path = require('path');
 
 const PlayerManager = require('./managers/playerManager');
 const GameManager = require('./managers/gameManager');
-const Map1 = require("./entities/map");
+const {Map1, Map2} = require("./entities/map");
 const Game = require("./entities/game");
 const { mongoose } = require('./utils/database');
 const { User } = require('./utils/models/user');
@@ -23,6 +23,7 @@ const server = app.listen(process.env.PORT || 5000, () => {
 // ==== middlewares ====
 // Static files
 app.use('/js', express.static(path.join(__dirname, "../client/js")));
+app.use('/assets', express.static(path.join(__dirname, "../client/assets")));
 app.use('/map/js', express.static(path.join(__dirname, "../client/js")));
 app.use('/css', express.static(path.join(__dirname, "../client/css")));
 app.use('/map/css', express.static(path.join(__dirname, "../client/css")));
@@ -51,12 +52,18 @@ const game1 = new Game(
     io
 )
 
+const game2 = new Game(
+    new Map2("awaz", 1000, 640),
+    io
+)
+
 /* ========== Manager initialization ========= */
 const playerManager = new PlayerManager();
 const gameManager = new GameManager();
 
 // add games
 gameManager.addGame(game1);
+gameManager.addGame(game2);
 
 io.on('connection', (socket) => {
     // A player/tank object needs to be to created
@@ -132,9 +139,9 @@ app.post('/user', (req, res) => {
             return newUser.save()
         }
         if (playerManager.getPlayerByName(data.handle)) {
-            return Promise.reject('already logged in from different browser');
+            return Promise.reject('Already logged in from different browser!');
         }
-        return Promise.resolve('user exists and password matches');
+        return Promise.resolve('User exists and password matches!');
     }).then((result) => {
         // set the session
         req.session.player = {

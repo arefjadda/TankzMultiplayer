@@ -42,7 +42,7 @@ function submitForm(e) {
             window.location.href = data.url;
         }
     }).catch((err) => {
-        alert('something went wrong!!');
+        alert('Something went wrong!!');
         console.error(err);
     });
 

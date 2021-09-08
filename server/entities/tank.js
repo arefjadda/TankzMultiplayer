@@ -33,7 +33,8 @@ class Tank extends Rectangle {
         this.moveDown = false;
         this.rotNozzleCW = false;
         this.rotNozzleCCW = false;
-
+        
+        this.availableBullets = 3;
         this.shotBullet = null;
 
         // component type
@@ -49,6 +50,7 @@ class Tank extends Rectangle {
         this.moveDown = false;
         this.rotNozzleCW = false;
         this.rotNozzleCCW = false;
+        this.availableBullets = 3;
     }
 
     takeDamage(damage) {
@@ -120,16 +122,22 @@ class Tank extends Rectangle {
     }
 
     shoot() {
-        const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
-        const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
-        this.shotBullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3);
+        if (this.availableBullets > 0)
+        {
+            const bulletX = this.posX + (this.width / 2) + (52 * Math.cos(this.nozzleRot * (Math.PI / 180)));
+            const bulletY = this.posY + (this.height / 2) + (52 * Math.sin(this.nozzleRot * (Math.PI / 180)));
+            this.shotBullet = new Bullet(bulletX, bulletY, 3, this.nozzleRot, 3, this.ownerID);
+            this.availableBullets--;
+        }
 
     }
 
     getBullet() {
-        const bullet = this.shotBullet;
+        return this.shotBullet;
+    }
+
+    reloadBullet() {
         this.shotBullet = null;
-        return bullet;
     }
 
 }
