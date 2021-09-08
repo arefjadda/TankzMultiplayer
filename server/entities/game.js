@@ -269,7 +269,7 @@ class Game {
                         this.nextState = GameState.IDLE;
                     }
                     else {
-                        console.log("about to start homie");
+                        console.log("about to start");
                         this.nextState = GameState.STARTING;
                     }
                 }

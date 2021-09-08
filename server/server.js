@@ -139,9 +139,9 @@ app.post('/user', (req, res) => {
             return newUser.save()
         }
         if (playerManager.getPlayerByName(data.handle)) {
-            return Promise.reject('already logged in from different browser');
+            return Promise.reject('Already logged in from different browser!');
         }
-        return Promise.resolve('user exists and password matches');
+        return Promise.resolve('User exists and password matches!');
     }).then((result) => {
         // set the session
         req.session.player = {

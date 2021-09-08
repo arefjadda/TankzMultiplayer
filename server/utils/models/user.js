@@ -7,13 +7,13 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-        minlength: [3, 'name is too short'],
-        maxlength: [15, 'your name is YUGE']
+        minlength: [3, 'Your username is too short!'],
+        maxlength: [15, 'Your username is too long!']
     },
     password: {
         type: String,
-        minlength: [4, 'Aref says your password is very small'],
-        maxlength: [15, 'Sina says your password is very big'],
+        minlength: [4, 'Your password is too short!'],
+        maxlength: [15, 'Your password is too long!'],
         required: true,
     },
     wins: {
@@ -38,7 +38,7 @@ UserSchema.statics.findByNameAndPassword = (name, password) => {
                if (result) {
                    resolve(user);
                } else {
-                   reject('passwords did not match');
+                   reject('Incorrect password!');
                }
 
            });

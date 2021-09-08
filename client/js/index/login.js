@@ -12,9 +12,9 @@ $(document).ready(() => {
         const pwd = passwordInput.val();
 
         if (handle === '') {
-            alert("handle must not be empty");
+            alert("Usename must not be empty!");
         } else if (pwd === '') {
-            alert("password cannot be empty");
+            alert("Password cannot be empty!");
         } else {
             // Get the correct handle
             const data = {
